@@ -38,7 +38,7 @@ const rules: FieldRule[] = [
     id: 'terms',
     validate: (form) => {
       const checked = (form.elements.namedItem('terms') as HTMLInputElement).checked;
-      return checked ? null : 'Accept the event rules to reserve a ticket';
+      return checked ? null : 'Promise to explain your code slowly to book a duck';
     },
   },
 ];
@@ -109,8 +109,12 @@ export function setupForm(): void {
     if (errors.length > 0) return;
 
     const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
-    const ticket = (form.querySelector<HTMLInputElement>('input[name="ticket"]:checked')?.labels?.[0]?.textContent ?? 'Standard').trim();
+    const plan = form.querySelector<HTMLInputElement>('input[name="plan"]:checked')?.dataset.label ?? 'Junior Duck';
     form.reset();
-    status.textContent = `Thank you, ${name}! Your "${ticket}" ticket is reserved. We have emailed you the details.`;
+    // `reset()` does not fire input events; tell listeners (the ticket preview) the form changed.
+    form.dispatchEvent(new Event('input', { bubbles: true }));
+    status.textContent = `Thank you, ${name}! Your ${plan} is on its way. Expect a quack in your inbox.`;
+    // Purely visual celebration, handled in effects.ts.
+    document.dispatchEvent(new CustomEvent('registration:success'));
   });
 }

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { a11y } from '@jeprubio/playwright-a11y';
 import { openPage } from './support';
 
-test.describe('Registration form', () => {
+test.describe('Booking form', () => {
   test.beforeEach(async ({ page }) => {
     await openPage(page);
   });
@@ -13,14 +13,14 @@ test.describe('Registration form', () => {
       await e
         .element('email')
         .hasRole('textbox')
-        .hasAccessibleNameContaining('Email address')
-        .hasAccessibleDescription('We only use it to send your ticket.')
+        .hasAccessibleNameContaining('Work email')
+        .hasAccessibleDescription('We only use it to ship your duck.')
         .isRequired();
-      await e.element('ticket-group').hasRole('group').hasAccessibleName('Ticket type');
-      await e.element('ticket-standard').hasRole('radio').hasAccessibleName('Standard').isChecked();
-      await e.element('newsletter').hasRole('checkbox').hasAccessibleName('Send me news about future events');
-      await e.element('terms').hasRole('checkbox').hasAccessibleNameContaining('event rules').isRequired();
-      await e.element('submit').hasRole('button').hasAccessibleName('Reserve ticket');
+      await e.element('plan-group').hasRole('group').hasAccessibleName('Duck plan');
+      await e.element('plan-junior').hasRole('radio').hasAccessibleNameContaining('Junior Duck').isChecked();
+      await e.element('newsletter').hasRole('checkbox').hasAccessibleName('Send me one duck fact a month');
+      await e.element('terms').hasRole('checkbox').hasAccessibleNameContaining('explain my code slowly').isRequired();
+      await e.element('submit').hasRole('button').hasAccessibleName('Book my duck');
     });
   });
 
@@ -34,7 +34,7 @@ test.describe('Registration form', () => {
         .element('email')
         .isInvalid()
         .hasAccessibleDescriptionContaining('Error: Enter your email address');
-      await e.element('terms').isInvalid().hasAccessibleDescriptionContaining('Accept the event rules');
+      await e.element('terms').isInvalid().hasAccessibleDescriptionContaining('Promise to explain your code slowly');
     });
   });
 
@@ -64,13 +64,13 @@ test.describe('Registration form', () => {
   test('a valid submission is announced through a status live region', async ({ page }) => {
     await page.getByTestId('name').fill('Ada Lovelace');
     await page.getByTestId('email').fill('ada@example.com');
-    await page.getByTestId('ticket-tactile').check();
+    await page.getByTestId('plan-principal').check();
     await page.getByTestId('terms').check();
     await page.getByTestId('submit').click();
 
     await a11y(page).elementChecks(async (e) => {
       await e.element('form-status').hasRole('status').hasTextContaining('Thank you, Ada Lovelace');
-      await e.element('form-status').hasTextContaining('Tactile tour');
+      await e.element('form-status').hasTextContaining('Principal Duck is on its way');
       await e.element('name').isValid();
     });
     await expect(page.getByTestId('error-summary')).toBeHidden();

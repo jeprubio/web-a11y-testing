@@ -17,6 +17,16 @@ Accessibility is cheapest when it's part of the markup from the start. The page 
 - **Contrast** of at least 4.5:1 for text, and `prefers-reduced-motion` respected.
 - **A `data-testid`** on every element a test touches: the web equivalent of `Modifier.testTag`.
 
+### Making it look good without breaking accessibility
+
+The sample is deliberately playful (see the [README](../README.md#the-sample-site)), and the decoration follows a few rules so it never gets in the way:
+
+- **Decoration is hidden.** The duck, bubbles, code snippets, speech bubble, badge preview and footer parade are `aria-hidden="true"` and never focusable, so the tab order and accessibility tree stay the same.
+- **Motion is optional.** All animations sit behind `prefers-reduced-motion`. With reduced motion on, nothing moves or changes on its own, and scroll-reveal never hides content. Playwright runs with `reducedMotion: 'reduce'`, which also keeps the tests stable.
+- **Stats are readable.** Count-up numbers are animated in an `aria-hidden` copy; screen readers get the final value in visually hidden text.
+- **Shadows don't fake focus.** Buttons get their hard shadow from `filter: drop-shadow`, not `box-shadow`, so the "visible focus" check only counts the real focus outline.
+- **Contrast-sensitive text sits on solid colours.** The feature cards have a solid background, so axe can measure their contrast and catch the broken-mode regression.
+
 ## 2. Write down the manual checklist
 
 Before writing code, list what testers check by hand today. For this page:
@@ -46,7 +56,7 @@ On failure, each step attaches the accessibility tree as YAML and prints it in t
 `apps/sample/tests/support.ts` holds the tab order exactly as a tester would write it on paper:
 
 ```ts
-export const EXPECTED_TAB_ORDER = ['skip-link', 'nav-about', 'nav-programme', /* … */ 'footer-top'];
+export const EXPECTED_TAB_ORDER = ['skip-link', 'nav-features', 'nav-how', /* … */ 'footer-top'];
 ```
 
 `expectFocusOrder(EXPECTED_TAB_ORDER)` then covers forward order, backward order and visible focus in a single line.

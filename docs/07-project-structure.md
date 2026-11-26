@@ -41,7 +41,7 @@ Playwright must be a single copy: the `test` and `expect` objects the library us
 | | Library tests (`packages/a11y-testing/test`) | Sample app tests (`apps/sample/tests`) |
 |---|---|---|
 | Purpose | Prove each DSL method passes and fails correctly | Prove the library works on a real page, and serve as usage examples |
-| Page under test | Small HTML snippets loaded with `page.setContent` | The Equinox site, served by Vite |
+| Page under test | Small HTML snippets loaded with `page.setContent` | The DuckOps sample site, served by Vite |
 | Imports | `../src/index.js` (the source) | `@jeprubio/playwright-a11y` (the built package) |
 | Includes failure cases | Yes: they assert on error messages | Only through broken mode |
 

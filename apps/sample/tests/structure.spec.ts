@@ -11,7 +11,7 @@ test.describe('Page structure and ARIA', () => {
     await a11y(page).pageChecks((p) =>
       p
         .hasLanguage('en')
-        .hasTitle(/Equinox Night/)
+        .hasTitle(/DuckOps/)
         .hasLandmarks(['banner', 'navigation', 'main', 'contentinfo'])
         .hasNoPositiveTabindex()
         .imagesHaveAlt(),
@@ -24,13 +24,13 @@ test.describe('Page structure and ARIA', () => {
         .hasSingleH1()
         .hasNoSkippedHeadingLevels()
         .hasHeadingOutline([
-          'h1 Equinox Night: stargazing for everyone',
-          'h2 About the night',
-          'h3 Guided sky tours',
-          'h3 Tactile star maps',
-          'h3 Step-free site',
-          'h2 Programme',
-          'h2 Reserve a free ticket',
+          'h1 Rubber duck debugging, as a service',
+          'h2 Why engineering teams choose DuckOps',
+          'h3 Active listening',
+          'h3 Zero judgement',
+          'h3 Works offline',
+          'h2 Four steps to working code',
+          'h2 Book your duck',
           'h2 Frequently asked questions',
         ]),
     );
@@ -39,9 +39,9 @@ test.describe('Page structure and ARIA', () => {
   test('section headings are real headings', async ({ page }) => {
     await a11y(page).elementChecks(async (e) => {
       await e.element('page-title').isHeading(1);
-      await e.element('about-title').isHeading(2);
-      await e.element('programme-title').isHeading(2);
-      await e.element('register-title').isHeading(2);
+      await e.element('features-title').isHeading(2);
+      await e.element('how-title').isHeading(2);
+      await e.element('book-title').isHeading(2);
       await e.element('faq-title').isHeading(2);
       // Body text must not be marked up as a heading.
       await e.element('hero-lead').isNotHeading();
@@ -50,7 +50,7 @@ test.describe('Page structure and ARIA', () => {
 
   test('images and icons are described or hidden correctly', async ({ page }) => {
     await a11y(page).elementChecks(async (e) => {
-      await e.element('sky-image').hasRole('img').hasAccessibleNameContaining('constellation');
+      await e.element('how-diagram').hasRole('img').hasAccessibleNameContaining('you explain the bug to the duck');
       // The logo icon is decorative: hidden from assistive technology.
       await e.locator(page.getByTestId('brand').locator('svg'), 'brand icon').isHiddenFromAccessibility();
     });
@@ -59,8 +59,8 @@ test.describe('Page structure and ARIA', () => {
   test('links and buttons have meaningful names', async ({ page }) => {
     await a11y(page).elementChecks(async (e) => {
       await e.element('skip-link').hasRole('link').hasAccessibleName('Skip to main content');
-      await e.element('hero-register').hasRole('link').hasAccessibleName('Reserve a free ticket');
-      await e.element('open-details').hasRole('button').hasAccessibleName('Event details');
+      await e.element('hero-register').hasRole('link').hasAccessibleName('Book a duck');
+      await e.element('open-details').hasRole('button').hasAccessibleName('Meet the duck');
       await e.element('footer-top').hasNonBlankAccessibleName();
       await e.elementWithRole('navigation', 'Main').hasRole('navigation');
     });
@@ -72,33 +72,33 @@ test.describe('Page structure and ARIA', () => {
         - navigation "Main":
           - list:
             - listitem:
-              - link "About"
+              - link "Features"
             - listitem:
-              - link "Programme"
+              - link "How it works"
             - listitem:
-              - link "Register"
+              - link "Book a duck"
             - listitem:
               - link "FAQ"
       `);
     });
   });
 
-  test('programme is an ordered list of timed events', async ({ page }) => {
+  test('how it works is an ordered list of steps', async ({ page }) => {
     await a11y(page).elementChecks(async (e) => {
-      await e.element('programme-list').matchesAriaSnapshot(`
+      await e.element('steps-list').matchesAriaSnapshot(`
         - list:
           - listitem:
-            - time: "19:30"
-            - text: Doors open and welcome
+            - strong: Step 1
+            - text: Place the duck next to your keyboard
           - listitem:
-            - time: "20:00"
-            - text: /Talk/
+            - strong: Step 2
+            - text: Explain your code to it, line by line, out loud
           - listitem:
-            - time: "20:45"
-            - text: Guided telescope tours
+            - strong: Step 3
+            - text: /Stop when you hear yourself say/
           - listitem:
-            - time: "22:30"
-            - text: Closing and hot chocolate
+            - strong: Step 4
+            - text: Fix the bug and thank the duck
       `);
     });
   });

@@ -18,7 +18,7 @@ On macOS, Firefox can also skip links on Tab. Both Playwright configs (`apps/sam
 
 ### Radio groups
 
-All browsers treat a radio group as **one** tab stop: the checked radio, or the first one if none is checked. Arrow keys move between options. That is why `EXPECTED_TAB_ORDER` lists only `ticket-standard`.
+All browsers treat a radio group as **one** tab stop: the checked radio, or the first one if none is checked. Arrow keys move between options. That is why `EXPECTED_TAB_ORDER` lists only `plan-junior`.
 
 ## Continuous integration
 

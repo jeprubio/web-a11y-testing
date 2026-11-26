@@ -7,7 +7,7 @@ You don't need to know Playwright well to turn a manual check into a test. Most 
 In the HTML, the element needs a `data-testid`:
 
 ```html
-<button type="button" data-testid="open-details">Event details</button>
+<button type="button" data-testid="open-details">Meet the duck</button>
 ```
 
 If it doesn't have one, ask a developer to add it. It's the same request as adding a `testTag` in Compose.
@@ -43,7 +43,7 @@ Save it as `apps/sample/tests/<something>.spec.ts`.
 | "Escape closes it and I'm back on the button" | `.press('Escape').shouldFocus('open-details')` |
 | "Tab doesn't escape the dialog" | `k.assertFocusTrappedIn('details-dialog')` |
 | "I never get stuck" | `k.assertNoKeyboardTrap()` |
-| "VoiceOver reads 'Close event details'" | `e.element('dialog-close').hasAccessibleName('Close event details')` |
+| "VoiceOver reads 'Close duck specifications'" | `e.element('dialog-close').hasAccessibleName('Close duck specifications')` |
 | "The error is read with the field" | `e.element('name').hasAccessibleDescriptionContaining('Enter your full name')` |
 | "It's announced as a heading" | `e.element('faq-title').isHeading(2)` |
 | "The icon is not read out" | `e.locator(page.locator('svg.icon')).isHiddenFromAccessibility()` |
@@ -62,7 +62,7 @@ Element checks go inside `elementChecks`, one `await` per element:
 
 ```ts
 await a11y(page).elementChecks(async (e) => {
-  await e.element('dialog-close').hasRole('button').hasAccessibleName('Close event details');
+  await e.element('dialog-close').hasRole('button').hasAccessibleName('Close duck specifications');
   await e.element('dialog-title').isHeading(2);
 });
 ```

@@ -16,15 +16,15 @@ export async function openPage(page: Page): Promise<void> {
  */
 export const EXPECTED_TAB_ORDER = [
   'skip-link',
-  'nav-about',
-  'nav-programme',
-  'nav-register',
+  'nav-features',
+  'nav-how',
+  'nav-book',
   'nav-faq',
   'hero-register',
   'open-details',
   'name',
   'email',
-  'ticket-standard',
+  'plan-junior',
   'newsletter',
   'terms',
   'submit',
@@ -34,5 +34,5 @@ export const EXPECTED_TAB_ORDER = [
   'footer-top',
 ];
 
-/** Tab order inside the "Event details" dialog. */
+/** Tab order inside the "Duck specifications" dialog. */
 export const DIALOG_TAB_ORDER = ['dialog-close', 'dialog-register', 'dialog-ok'];

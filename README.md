@@ -7,7 +7,7 @@ It is a small monorepo with the same shape as the Android `a11ytesting` project:
 | | Android (`a11ytesting`) | Web (this repo) | Published? |
 |---|---|---|---|
 | Library | `:library` module | [`packages/a11y-testing`](packages/a11y-testing): npm package `@jeprubio/playwright-a11y` | Yes |
-| Sample | `:app` module | [`apps/sample`](apps/sample): "Equinox Night", an accessible one-page site | No |
+| Sample | `:app` module | [`apps/sample`](apps/sample): "DuckOps", an accessible (and silly) one-page product site | No |
 | Tests using the library | Instrumented tests in `app/src/androidTest` | Playwright tests in `apps/sample/tests` | No |
 
 The DSL reads the same on both platforms:
@@ -17,7 +17,7 @@ The DSL reads the same on both platforms:
 composeTestRule.accessibility {
     keyboardFocus {
         next() shouldFocus "skip-link"
-        next() shouldFocus "nav-about"
+        next() shouldFocus "nav-features"
     }
 }
 ```
@@ -28,7 +28,7 @@ import { a11y } from '@jeprubio/playwright-a11y';
 
 await a11y(page).keyboardFocus((k) =>
   k.next().shouldFocus('skip-link')
-   .next().shouldFocus('nav-about'));
+   .next().shouldFocus('nav-features'));
 ```
 
 ## Quick start
@@ -66,6 +66,17 @@ The sample site runs at <http://localhost:5173>. Open <http://localhost:5173/?br
 | `npm run pack:lib` | Shows exactly which files would be published to npm |
 
 If port 5173 is busy, prefix a command with `PORT=5174`.
+
+## The sample site
+
+DuckOps is a fake product, "rubber duck debugging, as a service", built to look like a real landing page so the tests run against something realistic:
+
+- a floating, blinking rubber duck that talks back, with rising bubbles and code snippets;
+- count-up stats, scroll-reveal sections, tilting feature cards and an animated architecture diagram;
+- a booking form with a live staff badge that changes as you type (the Principal Duck gets a hard hat);
+- a duck burst when you book, and a family of ducks paddling across the footer.
+
+All of it is decorative: animated parts are hidden from assistive technology, and everything stops when the system asks for reduced motion. The tests run with reduced motion on, so animations never make them flaky.
 
 ## What the sample app tests
 

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { a11y } from '@jeprubio/playwright-a11y';
 import { DIALOG_TAB_ORDER, openPage } from './support';
 
-test.describe('Event details dialog', () => {
+test.describe('Duck specifications dialog', () => {
   test.beforeEach(async ({ page }) => {
     await openPage(page);
   });
@@ -11,7 +11,7 @@ test.describe('Event details dialog', () => {
     await a11y(page).keyboardFocus((k) =>
       k.tabTo('open-details').press('Enter').shouldFocusVisibly('dialog-close'),
     );
-    await expect(page.getByRole('dialog', { name: 'Event details' })).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Duck specifications' })).toBeVisible();
   });
 
   test('is announced as a modal dialog with a name and description', async ({ page }) => {
@@ -20,9 +20,9 @@ test.describe('Event details dialog', () => {
       await e
         .element('details-dialog')
         .hasRole('dialog')
-        .hasAccessibleName('Event details')
-        .hasAccessibleDescriptionContaining('21 March 2027');
-      await e.element('dialog-close').hasRole('button').hasAccessibleName('Close event details');
+        .hasAccessibleName('Duck specifications')
+        .hasAccessibleDescriptionContaining('nine centimetres');
+      await e.element('dialog-close').hasRole('button').hasAccessibleName('Close duck specifications');
       await e.element('dialog-title').isHeading(2);
     });
   });
@@ -32,7 +32,7 @@ test.describe('Event details dialog', () => {
     await a11y(page).keyboardFocus((k) =>
       k
         .assertFocusOn('dialog-close')
-        // Forward: close → register link → OK → back to close.
+        // Forward: close → "Book a duck" link → OK → back to close.
         .next().shouldFocus(DIALOG_TAB_ORDER[1])
         .next().shouldFocus(DIALOG_TAB_ORDER[2])
         .next().shouldFocus(DIALOG_TAB_ORDER[0])
@@ -65,7 +65,7 @@ test.describe('Event details dialog', () => {
     await page.getByTestId('open-details').click();
     // A modal dialog makes the rest of the page inert: it cannot receive focus, even from script,
     // and screen readers cannot browse to it.
-    const background = ['nav-about', 'hero-register', 'name', 'submit'];
+    const background = ['nav-features', 'hero-register', 'name', 'submit'];
     for (const testId of background) {
       const focused = await page.getByTestId(testId).evaluate((el: HTMLElement) => {
         el.focus();

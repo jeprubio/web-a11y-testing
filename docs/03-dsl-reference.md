@@ -14,7 +14,7 @@ import { a11y } from '@jeprubio/playwright-a11y';
 await a11y(page).keyboardFocus((k) =>
   k.assertNoFocus()
    .next().shouldFocus('skip-link')
-   .next().shouldFocusVisibly('nav-about')
+   .next().shouldFocusVisibly('nav-features')
    .previous().shouldFocus('skip-link'));
 ```
 
@@ -50,7 +50,7 @@ Example of a failure message from `expectFocusOrder`:
 Focus order mismatch, forward (Tab):
      #  expected         actual
   ✗  1  skip-link        submit
-  ✗  2  nav-about        skip-link
+  ✗  2  nav-features     skip-link
   ...
 ```
 
@@ -59,7 +59,7 @@ Focus order mismatch, forward (Tab):
 ```ts
 await a11y(page).elementChecks(async (e) => {
   await e.element('email').hasRole('textbox').hasAccessibleNameContaining('Email').isRequired();
-  await e.elementWithRole('button', 'Close event details').hasRole('button');
+  await e.elementWithRole('button', 'Close duck specifications').hasRole('button');
 });
 ```
 

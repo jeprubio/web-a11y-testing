@@ -20,11 +20,11 @@ test.describe('Keyboard navigation', () => {
       k
         .assertNoFocus()
         .next().shouldFocusVisibly('skip-link')
-        .next().shouldFocus('nav-about')
-        .next().shouldFocus('nav-programme')
-        .previous().shouldFocus('nav-about')
-        .next().shouldFocus('nav-programme')
-        .next().focusedHasName('Register'),
+        .next().shouldFocus('nav-features')
+        .next().shouldFocus('nav-how')
+        .previous().shouldFocus('nav-features')
+        .next().shouldFocus('nav-how')
+        .next().focusedHasName('Book a duck'),
     );
   });
 
@@ -52,18 +52,18 @@ test.describe('Keyboard navigation', () => {
     await a11y(page).keyboardFocus((k) => k.assertNoKeyboardTrap());
   });
 
-  test('the ticket radio group is one tab stop and arrow keys change the selection', async ({ page }) => {
+  test('the duck plan radio group is one tab stop and arrow keys change the selection', async ({ page }) => {
     await a11y(page).keyboardFocus((k) =>
       k
-        .tabTo('ticket-standard')
-        .press('ArrowDown').shouldFocus('ticket-companion')
-        .press('ArrowDown').shouldFocus('ticket-tactile')
+        .tabTo('plan-junior')
+        .press('ArrowDown').shouldFocus('plan-senior')
+        .press('ArrowDown').shouldFocus('plan-principal')
         // Tab leaves the group instead of visiting every radio button.
         .next().shouldFocus('newsletter')
         // Shift+Tab returns to the selected radio, not the first one.
-        .previous().shouldFocus('ticket-tactile'),
+        .previous().shouldFocus('plan-principal'),
     );
-    await expect(page.getByTestId('ticket-tactile')).toBeChecked();
+    await expect(page.getByTestId('plan-principal')).toBeChecked();
   });
 
   test('checkboxes toggle with Space', async ({ page }) => {

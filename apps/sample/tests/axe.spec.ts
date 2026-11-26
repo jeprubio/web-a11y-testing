@@ -18,7 +18,7 @@ test.describe('Automated WCAG 2.2 AA scan (axe-core)', () => {
 
   test('with form errors showing', async ({ page }) => {
     await page.getByTestId('submit').click();
-    await a11y(page).axe({ label: 'form errors', include: ['#register'] });
+    await a11y(page).axe({ label: 'form errors', include: ['#book'] });
   });
 
   test('with every FAQ answer expanded', async ({ page }) => {
