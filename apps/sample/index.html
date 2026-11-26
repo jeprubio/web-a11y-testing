@@ -31,6 +31,16 @@
             <li><a href="#faq" data-testid="nav-faq">FAQ</a></li>
           </ul>
         </nav>
+        <!-- WCAG 2.2.2 Pause, Stop, Hide: anything that moves for more than 5 seconds needs a way to pause it. -->
+        <button type="button" class="motion-toggle" data-testid="pause-animations" aria-pressed="false">
+          <svg class="icon-pause" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16">
+            <rect x="3" y="2" width="3.5" height="12" rx="1" /><rect x="9.5" y="2" width="3.5" height="12" rx="1" />
+          </svg>
+          <svg class="icon-play" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16">
+            <path d="M4 2.5 L13.5 8 L4 13.5 Z" />
+          </svg>
+          <span>Pause animations</span>
+        </button>
       </div>
     </header>
 

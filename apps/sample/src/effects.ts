@@ -11,7 +11,11 @@ const motion = () => !reducedMotion.matches;
 
 const SPEECH = ['Go on…', 'Mm-hm.', 'Quack?', 'And then?', 'Interesting…', 'Have you tried logging it?', 'I see.', 'Quack.'];
 
+const PAUSE_KEY = 'duckops:animations-paused';
+const isPaused = () => document.documentElement.classList.contains('paused');
+
 export function setupEffects(): void {
+  setupPauseToggle();
   setupBadgePreview();
   if (!motion()) return;
 
@@ -22,6 +26,39 @@ export function setupEffects(): void {
   setupSpeech();
   setupTilt();
   document.addEventListener('registration:success', celebrate);
+}
+
+/**
+ * "Pause animations" toggle (WCAG 2.2.2 Pause, Stop, Hide). The choice is remembered.
+ * It is always present so the page and its tab order are the same with or without motion.
+ */
+function setupPauseToggle(): void {
+  const toggle = document.querySelector<HTMLButtonElement>('[data-testid="pause-animations"]');
+  if (!toggle) return;
+
+  const apply = (paused: boolean) => {
+    document.documentElement.classList.toggle('paused', paused);
+    toggle.setAttribute('aria-pressed', String(paused));
+  };
+
+  apply(readPaused());
+  toggle.addEventListener('click', () => {
+    const paused = !isPaused();
+    apply(paused);
+    try {
+      localStorage.setItem(PAUSE_KEY, String(paused));
+    } catch {
+      // storage can be unavailable (private mode); the toggle still works for this visit
+    }
+  });
+}
+
+function readPaused(): boolean {
+  try {
+    return localStorage.getItem(PAUSE_KEY) === 'true';
+  } catch {
+    return false;
+  }
 }
 
 /** Fades sections in as they enter the viewport. */
@@ -101,21 +138,14 @@ function setupSpeech(): void {
     bubble.classList.add('is-changing');
   };
 
-  let timer = window.setInterval(() => {
+  // Auto-updating content counts for WCAG 2.2.2 too, so the bubble stops while paused.
+  window.setInterval(() => {
+    if (document.hidden || isPaused()) return;
     index = (index + 1) % SPEECH.length;
     say(SPEECH[index]);
   }, 2600);
 
   visual.addEventListener('pointerenter', () => say('Quack!'));
-  document.addEventListener('visibilitychange', () => {
-    window.clearInterval(timer);
-    if (!document.hidden) {
-      timer = window.setInterval(() => {
-        index = (index + 1) % SPEECH.length;
-        say(SPEECH[index]);
-      }, 2600);
-    }
-  });
 }
 
 /** Feature cards tilt slightly towards the pointer. */

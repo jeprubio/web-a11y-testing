@@ -22,6 +22,7 @@ Accessibility is cheapest when it's part of the markup from the start. The page 
 The sample is deliberately playful (see the [README](../README.md#the-sample-site)), and the decoration follows a few rules so it never gets in the way:
 
 - **Decoration is hidden.** The duck, bubbles, code snippets, speech bubble, badge preview and footer parade are `aria-hidden="true"` and never focusable, so the tab order and accessibility tree stay the same.
+- **Motion can be paused.** A "Pause animations" toggle in the header freezes every animation and the duck's speech bubble, and the choice is remembered (WCAG 2.2.2 Pause, Stop, Hide). Respecting the system setting alone is not enough for that rule.
 - **Motion is optional.** All animations sit behind `prefers-reduced-motion`. With reduced motion on, nothing moves or changes on its own, and scroll-reveal never hides content. Playwright runs with `reducedMotion: 'reduce'`, which also keeps the tests stable.
 - **Stats are readable.** Count-up numbers are animated in an `aria-hidden` copy; screen readers get the final value in visually hidden text.
 - **Shadows don't fake focus.** Buttons get their hard shadow from `filter: drop-shadow`, not `box-shadow`, so the "visible focus" check only counts the real focus outline.
@@ -78,10 +79,20 @@ A test that never fails proves nothing. `apps/sample/src/broken.ts` injects seve
 - The suite runs in Chromium, Firefox and WebKit (see [browser notes](06-browsers-ci-limitations.md)).
 - `.github/workflows/a11y.yml` runs it on every pull request and uploads the report and focus maps.
 
+## 9. Add the checks only the web needs
+
+Browsers let users zoom, override styles and pause motion, so some WCAG rules only exist on the web. The DSL checks them in [`web-only.spec.ts`](../apps/sample/tests/web-only.spec.ts): reflow at 320 CSS px, text spacing, focus hidden by sticky content, reduced motion and pausing animations.
+
+Adding them found three real bugs in DuckOps, which is exactly the point:
+
+1. **No way to pause the animations** (WCAG 2.2.2). The duck, bubbles and parade looped forever. Fix: the "Pause animations" toggle.
+2. **The sticky header covered focused fields at 400 % zoom** (WCAG 2.4.11). The header wraps onto several lines on narrow screens, more than `scroll-padding-top` allowed for. Fix: the header stops being sticky below 700 px.
+3. **Safari ignores `scroll-padding-top` for keyboard focus**, so Shift+Tab put the email field under the header in WebKit only. Fix: a small `focusin` handler that scrolls the element clear (`apps/sample/src/focus-scroll.ts`).
+
 ## Adopting it in another project
 
 1. Install the library: `npm install --save-dev @jeprubio/playwright-a11y @playwright/test` (once published; until then, copy `packages/a11y-testing` into your repo as a workspace).
 2. Add `data-testid` to the interactive elements you care about.
 3. Write `EXPECTED_TAB_ORDER` for each page with your testers.
-4. Start with three tests per page: `expectFocusOrder`, `assertNoKeyboardTrap` and `axe()`. Add element checks for the components with known bugs.
+4. Start with a few tests per page: `expectFocusOrder`, `assertNoKeyboardTrap`, `axe()`, `reflowsAt(320)` and `survivesTextSpacing()`. Add element checks for the components with known bugs.
 5. Run the tests in CI and block merges on failures.

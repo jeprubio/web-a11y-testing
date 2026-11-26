@@ -40,6 +40,8 @@ npm run dev -- --port 5174
 | Type your name and pick "Principal Duck" | The badge updates and the duck gets a hard hat. |
 | Open <http://localhost:5173/?broken=1> and press Tab once | Focus jumps to "Book my duck" with no outline: the [broken mode](05-broken-mode.md) bugs. |
 | Turn on *System Settings → Accessibility → Display → Reduce motion* and reload | Nothing moves; all content is still there. |
+| Press "Pause animations" in the header, then reload | Everything freezes, and stays paused after the reload. |
+| Zoom the browser to 400 % (**Cmd +** several times) | Everything fits the width without scrolling sideways; the header scrolls away instead of covering what you tab to. |
 
 In **Safari**, press **Option+Tab** instead of Tab. By default Safari's Tab skips links and buttons (see [browser notes](06-browsers-ci-limitations.md#webkit-safari)).
 

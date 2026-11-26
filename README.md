@@ -84,7 +84,7 @@ DuckOps is a fake product, "rubber duck debugging, as a service", built to look 
 - a booking form with a live staff badge that changes as you type (the Principal Duck gets a hard hat);
 - a duck burst when you book, and a family of ducks paddling across the footer.
 
-All of it is decorative: animated parts are hidden from assistive technology, and everything stops when the system asks for reduced motion. The tests run with reduced motion on, so animations never make them flaky.
+All of it is decorative: animated parts are hidden from assistive technology, everything stops when the system asks for reduced motion, and a "Pause animations" button in the header freezes it on demand. The tests run with reduced motion on, so animations never make them flaky.
 
 ## Focus order map
 
@@ -92,7 +92,7 @@ All of it is decorative: animated parts are hidden from assistive technology, an
 
 | Correct page | Broken mode (`?broken=1`) |
 |---|---|
-| <a href="docs/images/focus-map.png"><img src="docs/images/focus-map.png" width="380" alt="Focus order map of the DuckOps page: 17 numbered stops run in reading order, from the skip link and navigation at the top, through the hero buttons and the booking form, to the FAQ and the Back to top link in the footer."></a> | <a href="docs/images/focus-map-broken.png"><img src="docs/images/focus-map-broken.png" width="380" alt="Focus order map of the broken page: stop 1 is the Book my duck button halfway down the page, so the path jumps from the form up to the header and back down again."></a> |
+| <a href="docs/images/focus-map.png"><img src="docs/images/focus-map.png" width="380" alt="Focus order map of the DuckOps page: 18 numbered stops run in reading order, from the skip link, navigation and pause button at the top, through the hero buttons and the booking form, to the FAQ and the Back to top link in the footer."></a> | <a href="docs/images/focus-map-broken.png"><img src="docs/images/focus-map-broken.png" width="380" alt="Focus order map of the broken page: stop 1 is the Book my duck button halfway down the page, so the path jumps from the form up to the header and back down again."></a> |
 | Stops follow the reading order, top to bottom. | `tabindex="1"` on the submit button makes it stop **1**, so focus jumps to the middle of the page before the header. |
 
 The test behind it (`apps/sample/tests/focus-map.spec.ts`) also compares the stops with the expected order, so the map is both a review aid and an assertion. These two images are kept in [`docs/images`](docs/images); a test run writes fresh ones for every browser to `apps/sample/focus-maps/`.
@@ -107,6 +107,7 @@ The test behind it (`apps/sample/tests/focus-map.spec.ts`) also compares the sto
 | Structure | Language, title, landmarks, one h1, no skipped heading levels, heading outline, alt text, decorative icons hidden, ARIA snapshots | `structure.spec.ts` |
 | WCAG scan | axe-core with the WCAG 2.0, 2.1 and 2.2 A/AA rules, in four page states | `axe.spec.ts` |
 | Focus map | Visual map of the tab order, checked against the expected order | `focus-map.spec.ts` |
+| Web only | Reflow at 400 % zoom, text spacing overrides, focus never hidden under the sticky header (also when zoomed), reduced motion, and a pause control for endless animations | `web-only.spec.ts` |
 
 ## Project layout
 

@@ -203,6 +203,51 @@ main:focus {
   background: var(--duck);
 }
 
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  padding: 0.35rem 0.9rem;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.motion-toggle:hover {
+  background: var(--duck);
+}
+
+.motion-toggle svg {
+  fill: currentColor;
+}
+
+.motion-toggle[aria-pressed='true'] {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.motion-toggle .icon-play,
+.motion-toggle[aria-pressed='true'] .icon-pause {
+  display: none;
+}
+
+.motion-toggle[aria-pressed='true'] .icon-play {
+  display: inline;
+}
+
+/* Paused: freeze every animation where it is. */
+.paused *,
+.paused *::before,
+.paused *::after {
+  animation-play-state: paused !important;
+}
+
 /* ---------------------------------------------------------------- buttons */
 
 .button {
@@ -1272,6 +1317,18 @@ details p {
 }
 
 /* ---------------------------------------------------------------- responsive */
+
+/* On narrow screens (and at high zoom) the header wraps onto several lines. Pinned, it would
+   cover the focused element when tabbing backwards (WCAG 2.4.11), so it scrolls away instead. */
+@media (max-width: 700px) {
+  .site-header {
+    position: static;
+  }
+
+  html {
+    scroll-padding-top: 1rem;
+  }
+}
 
 @media (max-width: 900px) {
   .hero-grid,

@@ -6,8 +6,8 @@ export const BROKEN = process.env.BROKEN === '1';
 /** Opens the page, in broken mode when requested, and waits until the scripts have run. */
 export async function openPage(page: Page): Promise<void> {
   await page.goto(BROKEN ? '/?broken=1' : '/');
-  await page.getByTestId('page-title').waitFor();
-  await page.waitForLoadState('networkidle');
+  // main.ts sets data-ready once the dialog, form and effects are wired up.
+  await page.locator('html[data-ready="true"]').waitFor({ state: 'attached' });
 }
 
 /**
@@ -20,6 +20,7 @@ export const EXPECTED_TAB_ORDER = [
   'nav-how',
   'nav-book',
   'nav-faq',
+  'pause-animations',
   'hero-register',
   'open-details',
   'name',

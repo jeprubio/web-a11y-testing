@@ -21,7 +21,7 @@ Open the page with `?broken=1` (<http://localhost:5173/?broken=1>) and `apps/sam
 npm run test:broken
 ```
 
-This runs the Chromium suite against the broken page. About 20 of the 32 tests fail, each for one of the reasons above. Tests that don't touch a broken area keep passing, which shows the failures are targeted, not noise.
+This runs the Chromium suite against the broken page. About 20 of the 40 tests fail, each for one of the reasons above. Tests that don't touch a broken area keep passing, which shows the failures are targeted, not noise.
 
 Generate a focus map of the broken page next to the correct one:
 
