@@ -147,6 +147,8 @@ docs/                         process and reference documentation
 - [Project structure: the monorepo explained for Android developers](docs/07-project-structure.md)
 - [Running the site and the tests](docs/08-running-and-testing.md)
 
+Hackathon talk: [5-minute presentation](presentation/README.md), a self-contained HTML deck with speaker notes and a demo script.
+
 ## Important
 
 Automated tests catch a large share of accessibility problems, not all of them. They do not replace a test with a real screen reader (VoiceOver, NVDA, TalkBack) or with people with disabilities. Use them to stop regressions, so manual testing time goes to the things only a person can judge.

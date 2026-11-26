@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stop tabbing by hand: automated accessibility testing for the web</title>
+    <style>
+      :root {
+        --bg: #fff8ea;
+        --surface: #ffffff;
+        --alt: #eef4ff;
+        --ink: #14213d;
+        --muted: #4a5578;
+        --duck: #ffc93c;
+        --beak: #ff7a1a;
+        --water: #2f6fed;
+        --danger: #b42318;
+        --ok: #1f9254;
+        --focus: #1748c4;
+        --rounded: ui-rounded, 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; }
+      body {
+        background: var(--ink);
+        color: var(--ink);
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        overflow: hidden;
+      }
+      :focus-visible { outline: 3px solid var(--duck); outline-offset: 3px; border-radius: 8px; }
+
+      /* 1280x720 stage, scaled to fit the window */
+      .stage {
+        position: absolute;
+        top: calc(50% - 36px); /* leave a strip at the bottom for the controls */
+        left: 50%;
+        width: 1280px;
+        height: 720px;
+        transform: translate(-50%, -50%) scale(var(--scale, 1));
+        background: var(--bg);
+        border-radius: 18px;
+        overflow: hidden;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: 64px 80px 90px;
+        display: flex;
+        flex-direction: column;
+      }
+      .slide[hidden] { display: none; }
+      .slide.enter { animation: enter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+      @keyframes enter { from { opacity: 0; transform: translateX(var(--from, 40px)); } to { opacity: 1; transform: none; } }
+
+      h1, h2 { font-family: var(--rounded); letter-spacing: -0.02em; margin: 0; }
+      h1 { font-size: 56px; line-height: 1.08; font-weight: 900; }
+      h2 { font-size: 46px; line-height: 1.1; font-weight: 900; margin-bottom: 36px; }
+      p { margin: 0; }
+      .kicker {
+        align-self: flex-start;
+        margin-bottom: 18px;
+        padding: 4px 14px;
+        border: 2px solid var(--ink);
+        border-radius: 999px;
+        background: var(--duck);
+        font-weight: 800;
+        font-size: 15px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .lead { font-size: 26px; color: var(--muted); line-height: 1.45; max-width: 30ch; }
+      .highlight { background: linear-gradient(transparent 55%, var(--duck) 55%, var(--duck) 92%, transparent 92%); padding: 0 6px; }
+
+      /* Cover */
+      .cover { justify-content: center; }
+      .cover h1 { font-size: 92px; margin: 18px 0 26px; }
+      .cover .lead { max-width: 24ch; }
+      .cover .footer { position: absolute; left: 80px; bottom: 40px; color: var(--muted); font-weight: 600; font-size: 18px; }
+      .big-duck { position: absolute; right: 60px; bottom: 90px; width: 400px; animation: bob 4s ease-in-out infinite; }
+      @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(2deg); } }
+
+      /* Lists of points */
+      .points { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+      .points li {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        padding: 20px 24px;
+        background: var(--surface);
+        border: 2px solid var(--ink);
+        border-radius: 16px;
+        font-size: 24px;
+        line-height: 1.35;
+      }
+      .points .icon {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        border: 2px solid var(--ink);
+        background: var(--duck);
+        font-size: 26px;
+      }
+      .points.bad .icon { background: #ffd6cc; }
+      .points small { display: block; color: var(--muted); font-size: 19px; margin-top: 2px; }
+
+      .callout {
+        margin-top: 28px;
+        padding: 18px 24px;
+        border-radius: 16px;
+        border: 2px solid var(--ink);
+        background: var(--alt);
+        font-size: 22px;
+      }
+      .callout.ok { background: #e7f8ee; border-color: var(--ok); }
+
+      /* Code comparison */
+      .two { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+      .code-card { background: var(--surface); border: 2px solid var(--ink); border-radius: 18px; overflow: hidden; box-shadow: 8px 8px 0 var(--ink); }
+      .code-card header { padding: 10px 20px; background: var(--ink); color: #fff; font-weight: 800; font-size: 18px; }
+      .code-card.web header { background: var(--water); }
+      pre { margin: 0; padding: 22px 24px; font: 21px/1.55 ui-monospace, 'SF Mono', Menlo, monospace; white-space: pre; }
+      .k { color: #b42318; } .s { color: #1f7a45; } .f { color: #1748c4; }
+      .note { margin-top: 34px; font-size: 22px; color: var(--muted); }
+
+      /* Table */
+      table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 22px; border: 2px solid var(--ink); border-radius: 16px; overflow: hidden; background: var(--surface); }
+      th, td { text-align: left; padding: 15px 22px; border-bottom: 2px solid #dfe4f2; vertical-align: top; }
+      th { background: var(--ink); color: #fff; font-size: 18px; text-transform: uppercase; letter-spacing: 0.06em; }
+      td:first-child { font-weight: 800; width: 210px; }
+      tr:last-child td { border-bottom: 0; background: #fff3cc; }
+
+      /* Section slide */
+      .section { background: var(--duck); justify-content: center; }
+      .section h1 { font-size: 110px; }
+      .section .lead { color: var(--ink); max-width: 36ch; margin-top: 18px; }
+      .section ol { margin: 36px 0 0; padding-left: 28px; font-size: 22px; line-height: 1.7; font-weight: 600; }
+      .section .number { position: absolute; right: 80px; top: 40px; font-family: var(--rounded); font-size: 220px; font-weight: 900; opacity: 0.18; }
+
+      /* Images */
+      .maps { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+      figure { margin: 0; }
+      figure img { display: block; width: 100%; height: 430px; object-fit: contain; object-position: center; border: 2px solid var(--ink); border-radius: 16px; box-shadow: 6px 6px 0 var(--ink); background: #fff; }
+      figcaption { margin-top: 16px; font-size: 20px; color: var(--muted); }
+      figcaption strong { color: var(--ink); }
+
+      /* Next steps */
+      .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+      .card { padding: 30px; border: 2px solid var(--ink); border-radius: 18px; background: var(--surface); box-shadow: 8px 8px 0 var(--ink); }
+      .card.star { background: #fff3cc; }
+      .card h3 { margin: 12px 0 8px; font-family: var(--rounded); font-size: 30px; }
+      .card p { font-size: 21px; color: var(--muted); line-height: 1.45; }
+      .card .emoji { font-size: 40px; }
+
+      /* Thank you */
+      .final { align-items: center; justify-content: center; text-align: center; }
+      .final h1 { font-size: 100px; margin: 24px 0 18px; }
+      .final .repo { font: 700 26px ui-monospace, 'SF Mono', Menlo, monospace; padding: 10px 22px; border: 2px solid var(--ink); border-radius: 12px; background: var(--surface); }
+
+      /* Controls */
+      .controls {
+        position: fixed;
+        right: 24px;
+        bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10;
+      }
+      .controls button {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid var(--ink);
+        background: var(--duck);
+        color: var(--ink);
+        font-size: 24px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .controls button:disabled { opacity: 0.35; cursor: default; }
+      .controls button.small { width: auto; height: 40px; padding: 0 14px; border-radius: 999px; font-size: 15px; background: #fff; }
+      .counter { min-width: 72px; text-align: center; color: #fff; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .progress { position: fixed; left: 0; top: 0; height: 5px; background: linear-gradient(90deg, var(--duck), var(--beak)); transition: width 0.3s; z-index: 10; }
+
+      .notes-panel {
+        position: fixed;
+        left: 20px;
+        right: 20px;
+        bottom: 84px;
+        max-height: 34vh;
+        overflow: auto;
+        padding: 18px 22px;
+        background: rgba(20, 33, 61, 0.96);
+        color: #f4f6ff;
+        border: 2px solid var(--duck);
+        border-radius: 14px;
+        font-size: 18px;
+        line-height: 1.5;
+        z-index: 9;
+      }
+      .notes-panel[hidden] { display: none; }
+      .slide aside { display: none; }
+      .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation: none !important; transition: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress" aria-hidden="true"></div>
+
+    <main class="stage" aria-roledescription="slide deck" aria-label="Stop tabbing by hand">
+
+      <!-- 1 -->
+      <section class="slide cover" aria-roledescription="slide" aria-label="Stop tabbing by hand">
+        <p class="kicker">Equinox hackathon</p>
+        <h1>Stop tabbing<br /><span class="highlight">by hand</span></h1>
+        <p class="lead">Automated accessibility testing for the web, ported from our Android DSL.</p>
+        <p class="footer">November 2026</p>
+        <svg class="big-duck" viewBox="0 0 400 330" aria-hidden="true" focusable="false">
+          <ellipse cx="200" cy="292" rx="200" ry="40" fill="#cfe0ff" />
+          <path d="M70 190 C40 160 50 130 62 120 C78 150 96 160 110 168 Z" fill="#ffc93c" stroke="#14213d" stroke-width="4" />
+          <ellipse cx="180" cy="210" rx="125" ry="72" fill="#ffc93c" stroke="#14213d" stroke-width="4" />
+          <path d="M120 200 C140 160 210 160 230 196 C200 236 150 236 120 200 Z" fill="#f5a900" stroke="#14213d" stroke-width="4" />
+          <circle cx="262" cy="118" r="64" fill="#ffc93c" stroke="#14213d" stroke-width="4" />
+          <path d="M314 112 C352 104 372 116 360 128 C348 140 322 140 312 132 Z" fill="#ff7a1a" stroke="#14213d" stroke-width="4" />
+          <ellipse cx="282" cy="100" rx="12" ry="14" fill="#fff" />
+          <circle cx="286" cy="102" r="7" fill="#14213d" />
+        </svg>
+        <aside>~20 s. "Our testers check accessibility by hand on every release. On Android I automated that with a small DSL. For this hackathon I brought the same idea to the web, and the web turned out to have a few superpowers Android doesn't."</aside>
+      </section>
+
+      <!-- 2 -->
+      <section class="slide" aria-roledescription="slide" aria-label="The problem" hidden>
+        <p class="kicker">The problem</p>
+        <h2>Accessibility testing is still manual</h2>
+        <ul class="points">
+          <li><span class="icon" aria-hidden="true">⌨️</span><span>Every release, someone presses <strong>Tab</strong> and writes down where focus goes</span></li>
+          <li><span class="icon" aria-hidden="true">👀</span><span>They check outlines, labels, headings, dialogs and contrast by eye</span></li>
+          <li><span class="icon" aria-hidden="true">🔁</span><span>It's slow, easy to skip a step, and the same bugs come back</span></li>
+        </ul>
+        <p class="callout"><strong>On Android we already solved this:</strong> the a11ytesting library turned that checklist into instrumented tests.</p>
+        <aside>~30 s. "Keyboard order, visible focus, labels, dialogs. Our testers do this with a notepad. It takes ages and regressions slip through. On Android we fixed it with a Kotlin DSL on top of the Compose test APIs."</aside>
+      </section>
+
+      <!-- 3 -->
+      <section class="slide" aria-roledescription="slide" aria-label="Same DSL, new platform" hidden>
+        <p class="kicker">The idea</p>
+        <h2>Same DSL, new platform</h2>
+        <div class="two">
+          <div class="code-card">
+            <header>Android · Kotlin · Compose</header>
+<pre><span class="f">composeTestRule</span>.accessibility {
+  keyboardFocus {
+    next() <span class="k">shouldFocus</span> <span class="s">"skip-link"</span>
+    next() <span class="k">shouldFocus</span> <span class="s">"nav-features"</span>
+  }
+}</pre>
+          </div>
+          <div class="code-card web">
+            <header>Web · TypeScript · Playwright</header>
+<pre><span class="k">await</span> <span class="f">a11y</span>(page).keyboardFocus((k) =&gt;
+  k.next().<span class="k">shouldFocus</span>(<span class="s">'skip-link'</span>)
+   .next().<span class="k">shouldFocus</span>(<span class="s">'nav-features'</span>));</pre>
+          </div>
+        </div>
+        <p class="note">A publishable library plus a sample app, just like the Android project. Runs in Chrome, Firefox and Safari's engine.</p>
+        <aside>~30 s. "Same shape, same method names. Testers write the order they expect; the browser does the tabbing. And it's the same structure as Android: a library you can publish, and a sample app whose tests use it."</aside>
+      </section>
+
+      <!-- 4 -->
+      <section class="slide" aria-roledescription="slide" aria-label="What it checks" hidden>
+        <p class="kicker">What it checks</p>
+        <h2>One line per manual check</h2>
+        <table>
+          <thead><tr><th scope="col">Area</th><th scope="col">Checks</th></tr></thead>
+          <tbody>
+            <tr><td>Keyboard</td><td>Tab order forwards and backwards, visible focus, keyboard traps, dialog focus traps</td></tr>
+            <tr><td>Elements</td><td>What screen readers announce: names, descriptions, roles, headings, states</td></tr>
+            <tr><td>Page</td><td>Language, title, landmarks, heading outline, positive tabindex</td></tr>
+            <tr><td>WCAG scan</td><td>axe-core with WCAG 2.2 AA rules, in every page state</td></tr>
+            <tr><td>Web only ✨</td><td>400% zoom, text spacing, focus hidden by sticky headers, reduced motion, pausing animations</td></tr>
+          </tbody>
+        </table>
+        <aside>~20 s. Don't read the table. "Everything a tester checks by hand has a one-liner. The last row is what the web gives us that Android doesn't: zoom, user style sheets and animations."</aside>
+      </section>
+
+      <!-- 5 -->
+      <section class="slide section" aria-roledescription="slide" aria-label="Live demo" hidden>
+        <span class="number" aria-hidden="true">01</span>
+        <h1>Live demo</h1>
+        <p class="lead">DuckOps: rubber duck debugging, as a service.</p>
+        <ol>
+          <li>Tab through the page and the dialog</li>
+          <li><code>npm run test:chromium</code>: all green</li>
+          <li>Break it with <code>?broken=1</code> and run <code>npm run test:broken</code></li>
+        </ol>
+        <aside>~2 min.<br />
+          1. Browser on DuckOps: press Tab a few times (skip link, nav, buttons). Open "Meet the duck": Tab stays inside, Escape returns focus to the button.<br />
+          2. Terminal: <code>npm run test:chromium</code>, 39 tests green in about 15 s.<br />
+          3. Browser: add <code>?broken=1</code>, press Tab once: focus jumps to "Book my duck" with no outline.<br />
+          4. Terminal: <code>npm run test:broken</code>, scroll to the expected/actual focus table and the axe output.<br />
+          5. Back to the deck: next slide, the focus map.</aside>
+      </section>
+
+      <!-- 6 -->
+      <section class="slide" aria-roledescription="slide" aria-label="The tab order, drawn" hidden>
+        <p class="kicker">Focus order map</p>
+        <h2>The tab order, drawn</h2>
+        <div class="maps">
+          <figure>
+            <img src="images/focus-map-form.png" alt="Booking form with tab stops numbered 8 to 13 in reading order, ending at the Book my duck button." />
+            <figcaption><strong>Correct:</strong> stops follow the reading order.</figcaption>
+          </figure>
+          <figure>
+            <img src="images/focus-map-broken-form.png" alt="The same form in broken mode: the Book my duck button is stop 1, so the path jumps from the header to the bottom of the form." />
+            <figcaption><strong>Broken:</strong> one <code>tabindex="1"</code> makes the submit button stop 1.</figcaption>
+          </figure>
+        </div>
+        <aside>~20 s. "npm run focus-map tabs through the page and draws every stop. Left is correct. Right is broken mode: one positive tabindex and the submit button becomes the first thing you reach. Testers and designers get it as an image, and the test also checks the order."</aside>
+      </section>
+
+      <!-- 7 -->
+      <section class="slide" aria-roledescription="slide" aria-label="It already paid off" hidden>
+        <p class="kicker">It already paid off</p>
+        <h2>Our own showcase page failed it</h2>
+        <ul class="points bad">
+          <li><span class="icon" aria-hidden="true">🦆</span><span>Animations with no pause button <small>WCAG 2.2.2 · fixed with a remembered "Pause animations" toggle</small></span></li>
+          <li><span class="icon" aria-hidden="true">🔍</span><span>Sticky header hid focused fields at 400% zoom <small>WCAG 2.4.11 · header no longer sticky on narrow screens</small></span></li>
+          <li><span class="icon" aria-hidden="true">🧭</span><span>Safari ignores scroll padding for keyboard focus <small>WCAG 2.4.11 · only caught because the tests run in WebKit too</small></span></li>
+        </ul>
+        <p class="callout ok"><strong>Broken mode:</strong> seven classic bugs on demand. About 20 of 39 tests fail, each for the right reason.</p>
+        <aside>~40 s. "I built this page to be accessible from the start. The web-only checks still found three real bugs in it, one of them only in Safari. That's the pitch: manual testing would very likely have missed all three."</aside>
+      </section>
+
+      <!-- 8 -->
+      <section class="slide" aria-roledescription="slide" aria-label="Where it can go" hidden>
+        <p class="kicker">Next steps</p>
+        <h2>Where it can go</h2>
+        <div class="cards">
+          <div class="card"><span class="emoji" aria-hidden="true">📦</span><h3>Publish to npm</h3><p>Any web team adds it with one install command. The package is already set up.</p></div>
+          <div class="card star"><span class="emoji" aria-hidden="true">🔎</span><h3>Audit any URL</h3><p>Focus map, axe and zoom checks for any page, with zero test code. Something you can't do with someone else's Android app.</p></div>
+        </div>
+        <p class="note">Also possible: a screen reader transcript test, and focus maps posted on every pull request.</p>
+        <aside>~20 s. "It's ready to publish. The big next step is a zero-code audit: point it at any URL and get the report."</aside>
+      </section>
+
+      <!-- 9 -->
+      <section class="slide final" aria-roledescription="slide" aria-label="Thank you" hidden>
+        <svg width="120" height="100" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+          <ellipse cx="56" cy="70" rx="44" ry="26" fill="#ffc93c" stroke="#14213d" stroke-width="3" />
+          <circle cx="78" cy="36" r="24" fill="#ffc93c" stroke="#14213d" stroke-width="3" />
+          <path d="M98 32 C112 29 118 34 114 39 C110 44 100 44 96 41 Z" fill="#ff7a1a" stroke="#14213d" stroke-width="3" />
+          <circle cx="84" cy="30" r="4" fill="#14213d" />
+        </svg>
+        <h1>Thank you</h1>
+        <p class="repo">github.com/jeprubio/web-a11y-testing</p>
+        <aside>"Thanks! Happy to show the code or the test report." Leave this slide up during questions.</aside>
+      </section>
+    </main>
+
+    <nav class="controls" aria-label="Slide controls">
+      <button type="button" class="small" data-notes aria-pressed="false" title="Speaker notes (N)">Notes</button>
+      <button type="button" data-prev aria-label="Previous slide" title="Previous (←)">←</button>
+      <span class="counter" aria-hidden="true"></span>
+      <button type="button" data-next aria-label="Next slide" title="Next (→)">→</button>
+    </nav>
+    <div class="notes-panel" hidden></div>
+    <p class="sr-only" aria-live="polite" data-announce></p>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const prev = document.querySelector('[data-prev]');
+      const next = document.querySelector('[data-next]');
+      const notesButton = document.querySelector('[data-notes]');
+      const notesPanel = document.querySelector('.notes-panel');
+      const counter = document.querySelector('.counter');
+      const progress = document.querySelector('.progress');
+      const announce = document.querySelector('[data-announce]');
+      let current = 0;
+
+      function fit() {
+        const scale = Math.min((window.innerWidth - 32) / 1280, (window.innerHeight - 96) / 720);
+        document.querySelector('.stage').style.setProperty('--scale', String(scale));
+      }
+
+      function show(index, direction = 1) {
+        current = Math.max(0, Math.min(slides.length - 1, index));
+        slides.forEach((slide, i) => {
+          slide.hidden = i !== current;
+          slide.classList.remove('enter');
+        });
+        const slide = slides[current];
+        slide.style.setProperty('--from', direction >= 0 ? '40px' : '-40px');
+        void slide.offsetWidth;
+        slide.classList.add('enter');
+        counter.textContent = `${current + 1} / ${slides.length}`;
+        progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+        prev.disabled = current === 0;
+        next.disabled = current === slides.length - 1;
+        notesPanel.innerHTML = slide.querySelector('aside')?.innerHTML ?? '';
+        announce.textContent = `Slide ${current + 1} of ${slides.length}: ${slide.getAttribute('aria-label')}`;
+        history.replaceState(null, '', `#${current + 1}`);
+      }
+
+      prev.addEventListener('click', () => show(current - 1, -1));
+      next.addEventListener('click', () => show(current + 1, 1));
+      notesButton.addEventListener('click', toggleNotes);
+
+      function toggleNotes() {
+        notesPanel.hidden = !notesPanel.hidden;
+        notesButton.setAttribute('aria-pressed', String(!notesPanel.hidden));
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
+        const key = event.key;
+        if (['ArrowRight', 'PageDown', ' '].includes(key) && !(key === ' ' && event.target instanceof HTMLButtonElement)) {
+          event.preventDefault();
+          show(current + 1, 1);
+        } else if (['ArrowLeft', 'PageUp'].includes(key)) {
+          event.preventDefault();
+          show(current - 1, -1);
+        } else if (key === 'Home') {
+          show(0, -1);
+        } else if (key === 'End') {
+          show(slides.length - 1, 1);
+        } else if (key === 'n' || key === 'N') {
+          toggleNotes();
+        } else if (key === 'f' || key === 'F') {
+          document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+        }
+      });
+
+      window.addEventListener('resize', fit);
+      fit();
+      show(Math.max(0, Number(location.hash.slice(1) || 1) - 1));
+    </script>
+  </body>
+</html>
