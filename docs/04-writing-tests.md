@@ -70,10 +70,10 @@ await a11y(page).elementChecks(async (e) => {
 ## 4. Run only your test
 
 ```bash
-npm run build:lib && npm run test:chromium -w equinox-sample -- tests/my-feature.spec.ts
+npm run test:chromium -- tests/my-feature.spec.ts
 ```
 
-Add `--ui` to watch it run step by step, or `--headed` to see the browser.
+Add `--ui` to watch it run step by step, or `--headed` to see the browser, after the `--`: `npm run test:chromium -- tests/my-feature.spec.ts --headed`. See [running the site and the tests](08-running-and-testing.md) for every option.
 
 ## 5. When a test fails
 

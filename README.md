@@ -47,7 +47,7 @@ npx playwright install
 npm run dev
 ```
 
-The sample site runs at <http://localhost:5173>. Open <http://localhost:5173/?broken=1> to see it with deliberate accessibility bugs.
+The sample site runs at <http://localhost:5173>. Open <http://localhost:5173/?broken=1> to see it with deliberate accessibility bugs. Stop it with Ctrl+C.
 
 ## Commands (from the root)
 
@@ -65,7 +65,15 @@ The sample site runs at <http://localhost:5173>. Open <http://localhost:5173/?br
 | `npm run build:lib` | Compiles the library to `packages/a11y-testing/dist` |
 | `npm run pack:lib` | Shows exactly which files would be published to npm |
 
-If port 5173 is busy, prefix a command with `PORT=5174`.
+Pass options to Playwright after `--`:
+
+```bash
+npm run test:chromium -- --headed -g "dialog"
+```
+
+If port 5173 is busy, prefix a test command with `PORT=5174` and start the site with `npm run dev -- --port 5174`.
+
+[Running the site and the tests](docs/08-running-and-testing.md) has the full list: a hands-on checklist for trying the site by keyboard, every command and option, environment variables, where results go, and troubleshooting.
 
 ## The sample site
 
@@ -124,6 +132,7 @@ docs/                         process and reference documentation
 - [Broken mode and the demo script](docs/05-broken-mode.md)
 - [Browser notes, CI and limitations](docs/06-browsers-ci-limitations.md)
 - [Project structure: the monorepo explained for Android developers](docs/07-project-structure.md)
+- [Running the site and the tests](docs/08-running-and-testing.md)
 
 ## Important
 
