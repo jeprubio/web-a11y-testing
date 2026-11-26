@@ -1,11 +1,11 @@
 import { test, type Page } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
-import { scan, type ScanOptions } from './axe';
-import { AccessibilityAssertions } from './elements';
-import { drawFocusMap, resetFocus, walkTabOrder, type FocusInfo } from './focus';
-import { KeyboardA11y } from './keyboard';
-import { PageChecks } from './page-checks';
+import { scan, type ScanOptions } from './axe.js';
+import { AccessibilityAssertions } from './elements.js';
+import { drawFocusMap, resetFocus, walkTabOrder, type FocusInfo } from './focus.js';
+import { KeyboardA11y } from './keyboard.js';
+import { PageChecks } from './page-checks.js';
 
 /**
  * Entry point of the DSL. Web port of `ComposeTestRule.accessibility { ... }`.
@@ -68,5 +68,10 @@ export function a11y(page: Page): AccessibilityTestDsl {
   return new AccessibilityTestDsl(page);
 }
 
-export type { FocusInfo } from './focus';
-export { focusedElement, walkTabOrder } from './focus';
+// Public API. Anything not exported here is internal and may change between versions.
+export type { FocusInfo } from './focus.js';
+export { focusedElement, walkTabOrder, pressTab, tabKey, NO_FOCUS } from './focus.js';
+export { KeyboardA11y, FocusStep, type FocusOrderOptions } from './keyboard.js';
+export { AccessibilityAssertions, ElementAccessibility } from './elements.js';
+export { PageChecks } from './page-checks.js';
+export { scan, WCAG_AA_TAGS, type ScanOptions } from './axe.js';

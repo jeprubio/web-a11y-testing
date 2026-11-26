@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { a11y } from './a11y';
+import { a11y } from '@jeprubio/playwright-a11y';
 import { openPage } from './support';
 
 test.describe('Automated WCAG 2.2 AA scan (axe-core)', () => {

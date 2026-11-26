@@ -1,0 +1,52 @@
+{
+  "name": "@jeprubio/playwright-a11y",
+  "version": "0.1.0",
+  "description": "A Playwright DSL for automated accessibility checks: keyboard focus order, visible focus, focus traps, accessible names, page structure and axe-core WCAG scans.",
+  "license": "MIT",
+  "author": "jeprubio <jeprubio@gmail.com>",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "playwright",
+    "wcag",
+    "keyboard",
+    "focus-order",
+    "axe"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.49.0"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "^4.10.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}

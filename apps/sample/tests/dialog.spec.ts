@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { a11y } from './a11y';
+import { a11y } from '@jeprubio/playwright-a11y';
 import { DIALOG_TAB_ORDER, openPage } from './support';
 
 test.describe('Event details dialog', () => {

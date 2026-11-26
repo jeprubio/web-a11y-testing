@@ -6,3 +6,5 @@ blob-report/
 playwright/.cache/
 focus-maps/
 .DS_Store
+.vite/
+*.tsbuildinfo

@@ -24,6 +24,6 @@ jobs:
         with:
           name: a11y-report
           path: |
-            playwright-report/
-            focus-maps/
+            apps/sample/playwright-report/
+            apps/sample/focus-maps/
           retention-days: 14

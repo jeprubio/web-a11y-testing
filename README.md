@@ -1,11 +1,16 @@
 # Equinox: automated accessibility testing for the web
 
-Equinox is a hackathon project with two parts:
+Equinox is a hackathon project that automates the accessibility checks testers usually do by hand: keyboard focus order, visible focus, focus traps, accessible names, headings, landmarks and a WCAG 2.2 AA scan.
 
-1. **An accessible one-page site**, "Equinox Night", a fictional stargazing event with navigation, a registration form, a modal dialog and an FAQ.
-2. **A Playwright test DSL** that automates the accessibility checks testers usually do by hand: keyboard focus order, visible focus, focus traps, accessible names, headings, landmarks and a WCAG 2.2 AA scan.
+It is a small monorepo with the same shape as the Android `a11ytesting` project:
 
-The DSL is a web port of the Android [`a11ytesting`](../../Telefonica/a11ytesting) library (Kotlin, Jetpack Compose), so tests read the same way on both platforms:
+| | Android (`a11ytesting`) | Web (this repo) | Published? |
+|---|---|---|---|
+| Library | `:library` module | [`packages/a11y-testing`](packages/a11y-testing): npm package `@jeprubio/playwright-a11y` | Yes |
+| Sample | `:app` module | [`apps/sample`](apps/sample): "Equinox Night", an accessible one-page site | No |
+| Tests using the library | Instrumented tests in `app/src/androidTest` | Playwright tests in `apps/sample/tests` | No |
+
+The DSL reads the same on both platforms:
 
 ```kotlin
 // Android (Compose)
@@ -19,6 +24,8 @@ composeTestRule.accessibility {
 
 ```ts
 // Web (Playwright)
+import { a11y } from '@jeprubio/playwright-a11y';
+
 await a11y(page).keyboardFocus((k) =>
   k.next().shouldFocus('skip-link')
    .next().shouldFocus('nav-about'));
@@ -26,7 +33,7 @@ await a11y(page).keyboardFocus((k) =>
 
 ## Quick start
 
-Requires Node.js 20 or later.
+Requires Node.js 20 or later. Run everything from the repository root.
 
 ```bash
 npm install
@@ -40,55 +47,61 @@ npx playwright install
 npm run dev
 ```
 
-The site runs at <http://localhost:5173>. Open <http://localhost:5173/?broken=1> to see it with deliberate accessibility bugs.
+The sample site runs at <http://localhost:5173>. Open <http://localhost:5173/?broken=1> to see it with deliberate accessibility bugs.
 
-## Running the tests
+## Commands (from the root)
 
 | Command | What it does |
 |---|---|
-| `npm test` | Full suite in Chromium, Firefox and WebKit (Playwright starts the dev server) |
-| `npm run test:chromium` | Chromium only, the quickest feedback loop |
-| `npm run test:ui` | Playwright UI mode: step through each test and watch the browser |
-| `npm run test:broken` | Runs the suite against `?broken=1`. **It is expected to fail**, and shows what each test catches |
-| `npm run focus-map` | Writes `focus-maps/chromium.png`, a screenshot with every tab stop numbered |
-| `npm run report` | Opens the HTML report with the attached accessibility trees, axe results and focus maps |
-| `npm run typecheck` | TypeScript check for the site and the tests |
+| `npm test` | Builds the library, runs its own tests, then runs the sample app's tests, all in Chromium, Firefox and WebKit |
+| `npm run test:lib` | Library tests only (inline HTML fixtures, no server) |
+| `npm run test:sample` | Sample app tests only (Playwright starts the dev server) |
+| `npm run test:chromium` | Sample app tests in Chromium only, the quickest feedback loop |
+| `npm run test:ui` | Playwright UI mode for the sample app: step through each test and watch the browser |
+| `npm run test:broken` | Sample tests against `?broken=1`. **It is expected to fail**, and shows what each test catches |
+| `npm run focus-map` | Writes `apps/sample/focus-maps/chromium.png`, a screenshot with every tab stop numbered |
+| `npm run report` | Opens the sample app's HTML report (accessibility trees, axe results, focus maps) |
+| `npm run typecheck` | Builds the library and type-checks every workspace |
+| `npm run build:lib` | Compiles the library to `packages/a11y-testing/dist` |
+| `npm run pack:lib` | Shows exactly which files would be published to npm |
 
-## What is tested
+If port 5173 is busy, prefix a command with `PORT=5174`.
+
+## What the sample app tests
 
 | Area | Checks | Spec |
 |---|---|---|
-| Keyboard | Tab order forwards and backwards, visible focus at every stop, skip link, no keyboard trap, radio group arrow keys, checkbox Space, FAQ Enter | `tests/keyboard.spec.ts` |
-| Dialog | Opens from the keyboard, focus moves inside, Tab is trapped, Escape closes, focus returns to the opener, background is inert, name and description | `tests/dialog.spec.ts` |
-| Form | Labels, hints, required state, error summary focus, `aria-invalid`, errors read as descriptions, success announced in a live region | `tests/form.spec.ts` |
-| Structure | Language, title, landmarks, one h1, no skipped heading levels, heading outline, alt text, decorative icons hidden, ARIA snapshots | `tests/structure.spec.ts` |
-| WCAG scan | axe-core with the WCAG 2.0, 2.1 and 2.2 A/AA rules, in four page states | `tests/axe.spec.ts` |
-| Focus map | Visual map of the tab order, checked against the expected order | `tests/focus-map.spec.ts` |
+| Keyboard | Tab order forwards and backwards, visible focus at every stop, skip link, no keyboard trap, radio group arrow keys, checkbox Space, FAQ Enter | `keyboard.spec.ts` |
+| Dialog | Opens from the keyboard, focus moves inside, Tab is trapped, Escape closes, focus returns to the opener, background is inert, name and description | `dialog.spec.ts` |
+| Form | Labels, hints, required state, error summary focus, `aria-invalid`, errors read as descriptions, success announced in a live region | `form.spec.ts` |
+| Structure | Language, title, landmarks, one h1, no skipped heading levels, heading outline, alt text, decorative icons hidden, ARIA snapshots | `structure.spec.ts` |
+| WCAG scan | axe-core with the WCAG 2.0, 2.1 and 2.2 A/AA rules, in four page states | `axe.spec.ts` |
+| Focus map | Visual map of the tab order, checked against the expected order | `focus-map.spec.ts` |
 
 ## Project layout
 
 ```
-index.html                 the page (semantic HTML, data-testid on every element under test)
-src/
-  main.ts                  entry point
-  dialog.ts                modal dialog: focus trap and focus restoration
-  form.ts                  validation with an error summary and a live region
-  broken.ts                ?broken=1: injects seven common accessibility bugs
-  style.css                styles (WCAG AA contrast, one focus style for all controls)
-tests/
-  a11y/                    the DSL
-    index.ts               a11y(page): keyboardFocus, elementChecks, pageChecks, axe, focusMap
-    keyboard.ts            KeyboardA11y and FocusStep (port of the Kotlin classes)
-    elements.ts            AccessibilityAssertions and ElementAccessibility
-    page-checks.ts         whole-page structure checks
-    axe.ts                 axe-core wrapper with readable failures
-    focus.ts               focus inspection, tab walking, focus map drawing
-    chain.ts               makes the DSL chainable and awaitable
-    tree-dump.ts           accessibility tree dump on failure
-  support.ts               openPage() and the expected tab order
-  *.spec.ts                the test suites
-docs/                      process and reference documentation
-.github/workflows/a11y.yml CI pipeline
+package.json                  workspace root: lists packages/* and apps/*, holds the shared scripts
+tsconfig.base.json            compiler options shared by every workspace
+packages/a11y-testing/        THE LIBRARY (published as @jeprubio/playwright-a11y)
+  src/
+    index.ts                  a11y(page) and the public API: anything exported here is public
+    keyboard.ts               KeyboardA11y and FocusStep (port of the Kotlin classes)
+    elements.ts               AccessibilityAssertions and ElementAccessibility
+    page-checks.ts            whole-page structure checks
+    axe.ts                    axe-core wrapper with readable failures
+    focus.ts                  focus inspection, tab walking, focus map drawing
+    chain.ts                  makes the DSL chainable and awaitable
+    tree-dump.ts              accessibility tree dump on failure
+  test/                       the library's own tests, on inline HTML fixtures
+  tsconfig.build.json         compiles src/ to dist/ (JavaScript + type definitions)
+  README.md                   the page shown on npm
+apps/sample/                  THE SAMPLE APP (private, never published)
+  index.html                  the page (semantic HTML, data-testid on every element under test)
+  src/                        dialog, form validation, broken mode, styles
+  tests/                      Playwright tests that import @jeprubio/playwright-a11y
+docs/                         process and reference documentation
+.github/workflows/a11y.yml    CI pipeline
 ```
 
 ## Documentation
@@ -99,6 +112,7 @@ docs/                      process and reference documentation
 - [Writing tests: a guide for testers](docs/04-writing-tests.md)
 - [Broken mode and the demo script](docs/05-broken-mode.md)
 - [Browser notes, CI and limitations](docs/06-browsers-ci-limitations.md)
+- [Project structure: the monorepo explained for Android developers](docs/07-project-structure.md)
 
 ## Important
 

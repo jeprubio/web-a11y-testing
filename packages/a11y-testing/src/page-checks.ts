@@ -1,5 +1,5 @@
 import { expect, type Page } from '@playwright/test';
-import { Chain, StepQueue } from './chain';
+import { Chain, StepQueue } from './chain.js';
 
 /**
  * Whole-page structural checks that are tedious by hand but trivial for a script.
@@ -45,7 +45,10 @@ export class PageChecks extends Chain {
         const previous = i === 0 ? 0 : outline[i - 1].level;
         if (h.level > previous + 1) problems.push(`h${previous} → h${h.level} "${h.text}"`);
       });
-      expect(problems, `Skipped heading levels. Outline:\n${formatOutline(outline)}`).toEqual([]);
+      expect(
+        problems,
+        `Skipped heading levels: ${problems.join('; ')}\nOutline:\n${formatOutline(outline)}`,
+      ).toEqual([]);
     });
     return this;
   }
@@ -67,7 +70,7 @@ export class PageChecks extends Chain {
           .filter((el) => Number(el.getAttribute('tabindex')) > 0)
           .map((el) => `${(el as HTMLElement).dataset.testid ?? el.tagName.toLowerCase()} (tabindex=${el.getAttribute('tabindex')})`),
       );
-      expect(offenders, 'Elements with tabindex > 0').toEqual([]);
+      expect(offenders, `Elements with tabindex > 0: ${offenders.join(', ')}`).toEqual([]);
     });
     return this;
   }

@@ -1,5 +1,5 @@
 import { test, type Page } from '@playwright/test';
-import { attachTreeDump } from './tree-dump';
+import { attachTreeDump } from './tree-dump.js';
 
 type Step = { title: string; run: () => Promise<void> };
 

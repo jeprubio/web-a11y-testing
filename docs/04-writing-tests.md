@@ -16,7 +16,7 @@ If it doesn't have one, ask a developer to add it. It's the same request as addi
 
 ```ts
 import { test } from '@playwright/test';
-import { a11y } from './a11y';
+import { a11y } from '@jeprubio/playwright-a11y';
 import { openPage } from './support';
 
 test.describe('My feature', () => {
@@ -30,7 +30,7 @@ test.describe('My feature', () => {
 });
 ```
 
-Save it as `tests/<something>.spec.ts`.
+Save it as `apps/sample/tests/<something>.spec.ts`.
 
 ## 3. Translate the manual check
 
@@ -70,7 +70,7 @@ await a11y(page).elementChecks(async (e) => {
 ## 4. Run only your test
 
 ```bash
-npx playwright test tests/my-feature.spec.ts --project=chromium
+npm run build:lib && npm run test:chromium -w equinox-sample -- tests/my-feature.spec.ts
 ```
 
 Add `--ui` to watch it run step by step, or `--headed` to see the browser.
@@ -89,6 +89,6 @@ Run `npm run report` to see screenshots, the trace (a timeline you can scrub thr
 
 - **Test states, not just the page load.** Open the dialog, submit the form empty, expand the accordion, then check again.
 - **Prefer accessible names over test ids when you check text.** `hasAccessibleName` checks what users hear; `hasText` only checks what they see.
-- **Keep one expected order per page** in `tests/support.ts`, and update it with the design.
+- **Keep one expected order per page** in `apps/sample/tests/support.ts`, and update it with the design.
 - **Radio groups are one tab stop.** Use the arrow keys inside them (`press('ArrowDown')`).
 - **Don't silence axe without a reason.** If you need `disableRules`, add a comment and a ticket.

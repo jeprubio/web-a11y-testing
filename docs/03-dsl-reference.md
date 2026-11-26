@@ -3,7 +3,7 @@
 Import the entry point:
 
 ```ts
-import { a11y } from './a11y';
+import { a11y } from '@jeprubio/playwright-a11y';
 ```
 
 `a11y(page)` returns an object with five entry points. Chained steps run when the chain is awaited, or when the `keyboardFocus` / `pageChecks` block returns. Each step appears in the Playwright report under its own name. On failure, the accessibility tree is attached to the report and printed in the error.
@@ -136,7 +136,7 @@ Tabs through the whole page, draws numbered badges and a connecting path, and sa
 
 ## Lower-level helpers
 
-Exported from `tests/a11y/index.ts`:
+Also exported from the package (see `packages/a11y-testing/src/index.ts` for the full public API, including the builder classes and `scan`):
 
 - `focusedElement(page)`: a `FocusInfo` for the active element (`testId`, `label`, `focusVisible`, `inDialog`, `rect`), or `null`.
 - `walkTabOrder(page, maxStops?)`: `{ stops, wrapped }` after tabbing through the page.

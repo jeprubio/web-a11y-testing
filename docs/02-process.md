@@ -12,7 +12,7 @@ Accessibility is cheapest when it's part of the markup from the start. The page 
 - **Visible labels** for every field, with hints and errors linked through `aria-describedby`.
 - **An accessible error pattern**: an error summary with `role="alert"` that receives focus, links that move focus to each field, and `aria-invalid` on invalid fields.
 - **A live region** (`role="status"`) to announce success.
-- **A modal dialog** built on `<dialog>` + `showModal()`, plus a focus trap and focus restoration in `src/dialog.ts`.
+- **A modal dialog** built on `<dialog>` + `showModal()`, plus a focus trap and focus restoration in `apps/sample/src/dialog.ts`.
 - **Decorative SVGs** marked `aria-hidden="true" focusable="false"`; informative images have a real `alt`.
 - **Contrast** of at least 4.5:1 for text, and `prefers-reduced-motion` respected.
 - **A `data-testid`** on every element a test touches: the web equivalent of `Modifier.testTag`.
@@ -36,14 +36,14 @@ Each item became a test, and each test needed a few DSL primitives.
 
 The Kotlin library was ported class by class (see [the overview](01-overview.md#concept-mapping)). Two differences come from the platform:
 
-- **Async.** Playwright calls return promises. To keep the Kotlin chain style, every DSL method *records* a step and returns the builder; `await` runs the recorded steps in order (`tests/a11y/chain.ts`). Each step appears as a named step in the Playwright report.
+- **Async.** Playwright calls return promises. To keep the Kotlin chain style, every DSL method *records* a step and returns the builder; `await` runs the recorded steps in order (`packages/a11y-testing/src/chain.ts`). Each step appears as a named step in the Playwright report.
 - **Accessible name instead of content description.** The browser computes it from many sources, and Playwright exposes the computed value. The tests therefore check what assistive technology receives, not which attribute happens to be set.
 
 On failure, each step attaches the accessibility tree as YAML and prints it in the error. That's the web version of `printToLog("A11Y")`.
 
 ## 4. Declare the expected order once
 
-`tests/support.ts` holds the tab order exactly as a tester would write it on paper:
+`apps/sample/tests/support.ts` holds the tab order exactly as a tester would write it on paper:
 
 ```ts
 export const EXPECTED_TAB_ORDER = ['skip-link', 'nav-about', 'nav-programme', /* … */ 'footer-top'];
@@ -57,11 +57,11 @@ export const EXPECTED_TAB_ORDER = ['skip-link', 'nav-about', 'nav-programme', /*
 
 ## 6. Prove the tests catch bugs
 
-A test that never fails proves nothing. `src/broken.ts` injects seven common bugs when the page is opened with `?broken=1`. `npm run test:broken` must fail, and each failure must point at the right bug. See [broken mode](05-broken-mode.md).
+A test that never fails proves nothing. `apps/sample/src/broken.ts` injects seven common bugs when the page is opened with `?broken=1`. `npm run test:broken` must fail, and each failure must point at the right bug. See [broken mode](05-broken-mode.md).
 
 ## 7. Make it visual
 
-`npm run focus-map` tabs through the page and draws numbered badges and a path over each stop. The image goes in the report and in `focus-maps/`. It's the fastest way to review focus order with designers.
+`npm run focus-map` tabs through the page and draws numbered badges and a path over each stop. The image goes in the report and in `apps/sample/focus-maps/`. It's the fastest way to review focus order with designers.
 
 ## 8. Run it everywhere
 
@@ -70,7 +70,7 @@ A test that never fails proves nothing. `src/broken.ts` injects seven common bug
 
 ## Adopting it in another project
 
-1. Copy `tests/a11y/` into your project and install `@playwright/test` and `@axe-core/playwright`.
+1. Install the library: `npm install --save-dev @jeprubio/playwright-a11y @playwright/test` (once published; until then, copy `packages/a11y-testing` into your repo as a workspace).
 2. Add `data-testid` to the interactive elements you care about.
 3. Write `EXPECTED_TAB_ORDER` for each page with your testers.
 4. Start with three tests per page: `expectFocusOrder`, `assertNoKeyboardTrap` and `axe()`. Add element checks for the components with known bugs.

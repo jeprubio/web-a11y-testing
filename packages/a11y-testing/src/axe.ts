@@ -1,4 +1,4 @@
-import AxeBuilder from '@axe-core/playwright';
+import { AxeBuilder } from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 /** WCAG 2.0, 2.1 and 2.2, levels A and AA: the usual legal and contractual target. */

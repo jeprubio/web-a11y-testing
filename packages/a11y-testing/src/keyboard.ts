@@ -1,6 +1,6 @@
 import { expect, type Page } from '@playwright/test';
-import { Chain, StepQueue } from './chain';
-import { focusedElement, NO_FOCUS, pressTab, resetFocus, walkTabOrder, type FocusInfo } from './focus';
+import { Chain, StepQueue } from './chain.js';
+import { focusedElement, NO_FOCUS, pressTab, resetFocus, walkTabOrder, type FocusInfo } from './focus.js';
 
 export interface FocusOrderOptions {
   /** Also walk the sequence backwards with Shift+Tab. Default: true. */

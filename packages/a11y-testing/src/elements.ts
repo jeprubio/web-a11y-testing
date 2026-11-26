@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from '@playwright/test';
-import { Chain, StepQueue } from './chain';
+import { Chain, StepQueue } from './chain.js';
 
 type AriaRole = Parameters<Page['getByRole']>[0];
 

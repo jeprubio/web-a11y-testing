@@ -1,26 +1,30 @@
 {
-  "name": "equinox",
-  "version": "0.1.0",
+  "name": "equinox-workspace",
+  "version": "0.0.0",
   "private": true,
-  "description": "An accessible one-page site plus a Playwright DSL that automates manual keyboard and ARIA accessibility checks.",
+  "description": "Monorepo: the @jeprubio/playwright-a11y library and a sample app that uses it in its tests.",
   "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview --port 4173 --strictPort",
-    "typecheck": "tsc --noEmit",
-    "test": "playwright test",
-    "test:ui": "playwright test --ui",
-    "test:chromium": "playwright test --project=chromium",
-    "test:broken": "BROKEN=1 playwright test --project=chromium",
-    "focus-map": "playwright test focus-map --project=chromium",
-    "report": "playwright show-report"
+    "build:lib": "npm run build -w @jeprubio/playwright-a11y",
+    "dev": "npm run dev -w equinox-sample",
+    "typecheck": "npm run build:lib && npm run typecheck --workspaces --if-present",
+    "test": "npm run build:lib && npm run test:lib && npm run test:sample",
+    "test:lib": "npm run test -w @jeprubio/playwright-a11y",
+    "test:sample": "npm run test -w equinox-sample",
+    "test:chromium": "npm run build:lib && npm run test:chromium -w equinox-sample",
+    "test:ui": "npm run build:lib && npm run test:ui -w equinox-sample",
+    "test:broken": "npm run build:lib && npm run test:broken -w equinox-sample",
+    "focus-map": "npm run build:lib && npm run focus-map -w equinox-sample",
+    "report": "npm run report -w equinox-sample",
+    "pack:lib": "npm run build:lib && npm pack --dry-run -w @jeprubio/playwright-a11y"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.10.0",
     "@playwright/test": "^1.49.0",
     "@types/node": "^22.0.0",
-    "typescript": "^5.6.0",
-    "vite": "^5.4.0"
+    "typescript": "^5.6.0"
   }
 }

@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PORT = 5173;
+// Override with PORT=xxxx if 5173 is busy (for example, another dev server is running).
+const PORT = Number(process.env.PORT ?? 5173);
 
 export default defineConfig({
   testDir: './tests',

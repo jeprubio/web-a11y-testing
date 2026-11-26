@@ -1,6 +1,6 @@
 # Broken mode and the demo script
 
-Open the page with `?broken=1` (<http://localhost:5173/?broken=1>) and `src/broken.ts` injects seven common accessibility bugs. Each one is something manual testers report regularly, and each is caught by at least one automated test.
+Open the page with `?broken=1` (<http://localhost:5173/?broken=1>) and `apps/sample/src/broken.ts` injects seven common accessibility bugs. Each one is something manual testers report regularly, and each is caught by at least one automated test.
 
 ## The seven bugs
 
@@ -29,13 +29,13 @@ Generate a focus map of the broken page next to the correct one:
 BROKEN=1 npm run focus-map
 ```
 
-Compare `focus-maps/chromium.png` and `focus-maps/chromium-broken.png`. In the broken map, stop number 1 is the submit button halfway down the page.
+Compare `apps/sample/focus-maps/chromium.png` and `apps/sample/focus-maps/chromium-broken.png`. In the broken map, stop number 1 is the submit button halfway down the page.
 
 ## Five-minute demo script
 
 1. **The problem (30 s).** "Testers check keyboard order and screen reader labels by hand on every release. On Android we automated that; this is the same thing for the web."
 2. **The page (1 min).** Show the site. Press Tab: skip link, navigation, form, dialog. Open the dialog, press Escape, and show that focus returns to the button.
-3. **The tests (1 min).** Show `tests/keyboard.spec.ts` next to the Kotlin DSL. Run `npm run test:chromium`: all green in about 15 seconds.
+3. **The tests (1 min).** Show `apps/sample/tests/keyboard.spec.ts` next to the Kotlin DSL. Run `npm run test:chromium`: all green in about 15 seconds.
 4. **Break it (1.5 min).** Open `?broken=1` and Tab once: focus jumps to the submit button with no outline. Run `npm run test:broken` and walk through three failures:
    - the expected/actual focus order table;
    - the axe output: `label` and `button-name` with help links;
