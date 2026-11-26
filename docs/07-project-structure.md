@@ -43,7 +43,7 @@ Playwright must be a single copy: the `test` and `expect` objects the library us
 | Purpose | Prove each DSL method passes and fails correctly | Prove the library works on a real page, and serve as usage examples |
 | Page under test | Small HTML snippets loaded with `page.setContent` | The DuckOps sample site, served by Vite |
 | Imports | `../src/index.js` (the source) | `@jeprubio/playwright-a11y` (the built package) |
-| Includes failure cases | Yes: they assert on error messages | Only through broken mode |
+| Includes failure cases | Yes: they assert on error messages | A few (animations before pausing), plus broken mode |
 
 ## Publishing (when you are ready)
 

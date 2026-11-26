@@ -27,9 +27,7 @@ test.describe('Zoom, text spacing and sticky header', () => {
   test('the sticky header never hides the focused element, even when zoomed (WCAG 2.4.11)', async ({ page }) => {
     // At 400% zoom the header wraps onto several lines and covers more of the screen.
     await page.setViewportSize({ width: 320, height: 640 });
-    await a11y(page).keyboardFocus((k) =>
-      k.expectFocusOrder(EXPECTED_TAB_ORDER, { checkFocusVisible: false, checkNotObscured: true }),
-    );
+    await a11y(page).keyboardFocus((k) => k.expectFocusOrder(EXPECTED_TAB_ORDER));
   });
 });
 

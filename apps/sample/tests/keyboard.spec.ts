@@ -11,6 +11,8 @@ test.describe('Keyboard navigation', () => {
     await a11y(page).keyboardFocus((k) => k.assertNoFocus());
   });
 
+  // expectFocusOrder also checks, at every stop, that the focus indicator is visible (WCAG 2.4.7)
+  // and that the element is not hidden under the sticky header (WCAG 2.4.11).
   test('tab order follows the visual reading order, forwards and backwards', async ({ page }) => {
     await a11y(page).keyboardFocus((k) => k.expectFocusOrder(EXPECTED_TAB_ORDER));
   });
@@ -38,13 +40,6 @@ test.describe('Keyboard navigation', () => {
         .press('Enter').shouldFocus('main')
         // The next Tab continues from the main content, skipping the navigation.
         .next().shouldFocus('hero-register'),
-    );
-  });
-
-  test('every interactive element shows a visible focus indicator', async ({ page }) => {
-    // expectFocusOrder checks the indicator at every stop; this test documents it explicitly.
-    await a11y(page).keyboardFocus((k) =>
-      k.expectFocusOrder(EXPECTED_TAB_ORDER, { reverse: false, checkFocusVisible: true }),
     );
   });
 

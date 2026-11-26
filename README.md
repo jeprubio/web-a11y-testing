@@ -129,7 +129,8 @@ packages/a11y-testing/        THE LIBRARY (publishable as @jeprubio/playwright-a
   README.md                   the page shown on npm
 apps/sample/                  THE SAMPLE APP (private, never published)
   index.html                  the page (semantic HTML, data-testid on every element under test)
-  src/                        dialog, form validation, broken mode, styles
+  src/                        dialog, form validation, decorative effects and pause toggle,
+                              sticky-header focus fix, broken mode, styles
   tests/                      Playwright tests that import @jeprubio/playwright-a11y
 docs/                         process and reference documentation
 .github/workflows/a11y.yml    CI pipeline
