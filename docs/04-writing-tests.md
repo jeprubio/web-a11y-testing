@@ -48,6 +48,11 @@ Save it as `apps/sample/tests/<something>.spec.ts`.
 | "It's announced as a heading" | `e.element('faq-title').isHeading(2)` |
 | "The icon is not read out" | `e.locator(page.locator('svg.icon')).isHiddenFromAccessibility()` |
 | "Nothing looks wrong to axe" | `await a11y(page).axe()` |
+| "At 400% zoom I don't need to scroll sideways" | `p.reflowsAt(320)` |
+| "My text-spacing bookmarklet doesn't cut anything off" | `p.survivesTextSpacing()` |
+| "The sticky header never hides what I tab to" | `k.expectFocusOrder([...])` (checked by default) or `k.assertFocusNotObscured()` |
+| "With Reduce motion on, nothing moves" | `p.respectsReducedMotion()` |
+| "I can pause the animations" | click the pause control, then `p.hasNoEndlessAnimations()` |
 
 Keyboard checks go inside `keyboardFocus`:
 

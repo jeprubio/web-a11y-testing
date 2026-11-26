@@ -33,7 +33,7 @@ Like the Android project, the repository has a publishable **library** (`package
 | `isHeading` / `isNotHeading` | `isHeading(level?)` / `isNotHeading` | The web also has heading levels |
 | `hasText` / `hasTextContaining` | `hasText` / `hasTextContaining` | |
 | `printToLog("A11Y")` on failure | ARIA snapshot attached and printed on failure | |
-| (none) | `pageChecks`, `axe()`, `focusMap()`, `expectFocusOrder()` | New on the web |
+| (none) | `pageChecks`, `axe()`, `focusMap()`, `expectFocusOrder()`, `reflowsAt()`, `survivesTextSpacing()` | New on the web |
 
 ## What is new compared with the Android library
 
@@ -42,6 +42,7 @@ Like the Android project, the repository has a publishable **library** (`package
 - **Focus traps**: `assertFocusTrappedIn` for modals and `assertNoKeyboardTrap` for the page (WCAG 2.1.2).
 - **axe-core scan**: dozens of WCAG rules (contrast, labels, ARIA misuse) in one call.
 - **Page structure**: language, title, landmarks, heading outline, positive tabindex.
+- **Web-only checks**: content reflows at 400 % zoom (`reflowsAt`), text survives user text-spacing overrides (`survivesTextSpacing`), the focused element is never hidden under a sticky header (WCAG 2.4.11), nothing moves with reduced motion on (`respectsReducedMotion`) and endless animations can be paused (`hasNoEndlessAnimations`). None of these has a practical Android equivalent.
 - **Focus map**: a screenshot with every tab stop numbered. It's useful in design reviews and bug reports.
 - **Broken mode**: the page can switch on seven real-world bugs so the suite can be demoed failing.
 

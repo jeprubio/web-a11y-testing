@@ -9,6 +9,11 @@ export interface FocusInfo {
   label: string;
   focusVisible: boolean;
   inDialog: boolean;
+  /**
+   * True when no part of the element can be seen: it is scrolled out of the viewport or
+   * entirely covered by something else, such as a sticky header (WCAG 2.4.11).
+   */
+  obscured: boolean;
   /** Position in document coordinates (viewport coordinates for sticky/fixed elements). */
   rect: { x: number; y: number; width: number; height: number };
 }
@@ -36,7 +41,9 @@ export const NO_FOCUS = '<no element: focus is on the page body or left the page
 
 /** Reads the currently focused element. Returns null when focus is on <body> or outside the page. */
 export async function focusedElement(page: Page): Promise<FocusInfo | null> {
-  return page.evaluate(() => {
+  return page.evaluate(async () => {
+    // Some engines (WebKit) scroll a newly focused element into view a frame later; let it settle.
+    await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
     const el = document.activeElement as HTMLElement | null;
     if (!el || el === document.body || el === document.documentElement) return null;
 
@@ -61,6 +68,30 @@ export async function focusedElement(page: Page): Promise<FocusInfo | null> {
     const dx = pinned ? 0 : window.scrollX;
     const dy = pinned ? 0 : window.scrollY;
 
+    // Sample the part of the element that is inside the viewport: if no sample point shows
+    // the element itself (or a child, or an ancestor it lets clicks through to), it is hidden.
+    const left = Math.max(r.left, 0);
+    const top = Math.max(r.top, 0);
+    const right = Math.min(r.right, window.innerWidth);
+    const bottom = Math.min(r.bottom, window.innerHeight);
+    let obscured = r.width > 0 && r.height > 0;
+    if (obscured && right > left && bottom > top) {
+      const inset = (a: number, b: number) => Math.min(2, (b - a) / 4);
+      const ix = inset(left, right);
+      const iy = inset(top, bottom);
+      const points: [number, number][] = [
+        [(left + right) / 2, (top + bottom) / 2],
+        [left + ix, top + iy],
+        [right - ix, top + iy],
+        [left + ix, bottom - iy],
+        [right - ix, bottom - iy],
+      ];
+      obscured = !points.some(([x, y]) => {
+        const hit = document.elementFromPoint(x, y);
+        return hit !== null && (hit === el || el.contains(hit) || hit.contains(el));
+      });
+    }
+
     return {
       id: testId ?? fallback,
       testId,
@@ -68,6 +99,7 @@ export async function focusedElement(page: Page): Promise<FocusInfo | null> {
       label,
       focusVisible: hasOutline || hasShadow,
       inDialog: el.closest('dialog') !== null,
+      obscured,
       rect: { x: r.x + dx, y: r.y + dy, width: r.width, height: r.height },
     };
   });

@@ -7,6 +7,8 @@ export interface FocusOrderOptions {
   reverse?: boolean;
   /** Fail if any stop has no visible focus indicator. Default: true. */
   checkFocusVisible?: boolean;
+  /** Fail if any stop is entirely hidden, for example under a sticky header (WCAG 2.4.11). Default: true. */
+  checkNotObscured?: boolean;
   /** Start from a clean state (nothing focused) before tabbing. Default: true. */
   fromStart?: boolean;
 }
@@ -90,24 +92,39 @@ export class KeyboardA11y extends Chain {
     return this;
   }
 
+  /** Asserts that the focused element is not entirely hidden, for example under a sticky header (WCAG 2.4.11). */
+  assertFocusNotObscured(): this {
+    this.queue.add('focused element is not hidden by other content', async () => {
+      const info = await focusedElement(this.page);
+      expect(info, 'Expected a focused element').not.toBeNull();
+      expect(
+        info!.obscured,
+        `"${info!.id}" is focused but entirely hidden by other content or off screen (WCAG 2.4.11 Focus Not Obscured)`,
+      ).toBe(false);
+    });
+    return this;
+  }
+
   /**
    * The one-liner for testers: declare the expected tab order and the DSL walks it,
    * forwards and backwards, checking the focus indicator at every stop. On failure it
    * prints the expected and actual order side by side.
    */
   expectFocusOrder(expected: string[], options: FocusOrderOptions = {}): this {
-    const { reverse = true, checkFocusVisible = true, fromStart = true } = options;
+    const { reverse = true, checkFocusVisible = true, checkNotObscured = true, fromStart = true } = options;
     this.queue.add(`focus order is ${expected.join(' → ')}`, async () => {
       if (fromStart) await resetFocus(this.page);
 
       const forward = await this.collect(false, expected.length);
       assertSequence('forward (Tab)', expected, forward);
       if (checkFocusVisible) assertAllVisible(forward);
+      if (checkNotObscured) assertNoneObscured('forward (Tab)', forward);
 
       if (reverse && expected.length > 1) {
         const backwardExpected = expected.slice(0, -1).reverse();
         const backward = await this.collect(true, backwardExpected.length);
         assertSequence('backward (Shift+Tab)', backwardExpected, backward);
+        if (checkNotObscured) assertNoneObscured('backward (Shift+Tab)', backward);
       }
     });
     return this;
@@ -236,6 +253,15 @@ function assertSequence(direction: string, expected: string[], actual: (FocusInf
       `     #  ${'expected'.padEnd(width)}  actual\n` +
       rows.join('\n'),
   );
+}
+
+function assertNoneObscured(direction: string, stops: (FocusInfo | null)[]): void {
+  const hidden = stops.filter((s): s is FocusInfo => s !== null && s.obscured).map((s) => s.id);
+  if (hidden.length > 0) {
+    throw new Error(
+      `Focused element entirely hidden by other content, ${direction} (WCAG 2.4.11 Focus Not Obscured): ${hidden.join(', ')}`,
+    );
+  }
 }
 
 function assertAllVisible(stops: (FocusInfo | null)[]): void {

@@ -38,7 +38,8 @@ Automated testing finds a large share of accessibility issues, not all of them. 
 - whether an accessible name or alt text is **meaningful** (only that it exists or matches what you wrote);
 - whether the **reading experience** with a real screen reader makes sense (verbosity, announcement order, live region timing);
 - **cognitive** accessibility: plain language, consistent navigation, predictable behaviour;
-- zoom and reflow at 400 %, text spacing, or orientation. These could be added with Playwright viewport tests;
+- orientation, or content that only overflows at zoom levels other than 400 % (reflow and text spacing are covered by `reflowsAt` and `survivesTextSpacing`);
+- auto-updating content driven by JavaScript timers: `hasNoEndlessAnimations` sees CSS and Web Animations API animations only;
 - issues in states the tests never reach.
 
 Use this suite to stop regressions and to free manual testing time for screen reader sessions and testing with real users.
@@ -46,7 +47,6 @@ Use this suite to stop regressions and to free manual testing time for screen re
 ## Ideas for after the hackathon
 
 - Publish `@jeprubio/playwright-a11y` to npm so other Telefónica web projects can install it.
-- Add a `reflow` check: render at 320 CSS px wide and assert there is no horizontal scroll (WCAG 1.4.10).
 - Add a `targetSize` check: every control is at least 24×24 px (WCAG 2.5.8).
 - Generate `EXPECTED_TAB_ORDER` from a Figma annotation layer so design owns the order.
 - Compare focus maps between branches and post the diff on the pull request.

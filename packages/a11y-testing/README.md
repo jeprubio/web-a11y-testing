@@ -47,9 +47,9 @@ Elements are found by `data-testid`, the web equivalent of Compose's `Modifier.t
 
 | Entry point | Checks |
 |---|---|
-| `keyboardFocus` | Tab / Shift+Tab order, `expectFocusOrder([...])` with an expected/actual table on failure, visible focus (WCAG 2.4.7), keyboard traps (2.1.2), modal focus traps |
+| `keyboardFocus` | Tab / Shift+Tab order, `expectFocusOrder([...])` with an expected/actual table on failure, visible focus (WCAG 2.4.7), focus hidden by sticky headers (2.4.11), keyboard traps (2.1.2), modal focus traps |
 | `elementChecks` | Accessible name and description, role, heading and level, text, required, invalid, checked, hidden from assistive technology, ARIA snapshots |
-| `pageChecks` | Language, title, single h1, skipped heading levels, heading outline, landmarks, positive tabindex, image alt |
+| `pageChecks` | Language, title, single h1, skipped heading levels, heading outline, landmarks, positive tabindex, image alt, plus web-only checks: reflow at 400 % zoom, text spacing, reduced motion and endless animations |
 | `axe` | axe-core with WCAG 2.0/2.1/2.2 A and AA tags, readable failures, full JSON attached to the report |
 | `focusMap` | Full-page screenshot with every tab stop numbered and joined |
 

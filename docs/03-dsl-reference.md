@@ -30,7 +30,8 @@ await a11y(page).keyboardFocus((k) =>
 | `tabTo(testId, maxStops = 50)` | Presses Tab until `testId` has focus; fails and lists what was visited if it never gets there. |
 | `assertFocusOn(testId)` | The element with `data-testid=testId` has focus. |
 | `assertFocusVisible()` | The focused element shows an outline or box shadow. |
-| `expectFocusOrder(ids, options?)` | Walks the whole order. Options: `reverse` (default `true`), `checkFocusVisible` (default `true`), `fromStart` (default `true`). On failure it prints an expected/actual table. |
+| `expectFocusOrder(ids, options?)` | Walks the whole order. Options: `reverse` (default `true`), `checkFocusVisible` (default `true`), `checkNotObscured` (default `true`), `fromStart` (default `true`). On failure it prints an expected/actual table. |
+| `assertFocusNotObscured()` | The focused element is not entirely hidden, for example under a sticky header or off screen (WCAG 2.4.11). |
 | `assertNoKeyboardTrap(maxStops = 100)` | Tabbing from the top eventually leaves the page or wraps to the first element. |
 | `assertFocusTrappedIn(testId, presses = 8)` | Focus stays inside the container for N Tabs and N Shift+Tabs. Use for modals. |
 
@@ -109,6 +110,30 @@ await a11y(page).pageChecks((p) =>
 | `hasNoPositiveTabindex()` | No `tabindex` greater than 0 |
 | `hasLandmarks(['banner', 'main', …])` | Landmarks present, and exactly one `main` |
 | `imagesHaveAlt()` | Every `<img>` has an `alt` (empty is fine for decorative images) |
+
+### Web-only checks
+
+These have no real equivalent on Android: they cover browser zoom, user style sheets and CSS animations.
+
+| Method | Checks |
+|---|---|
+| `reflowsAt(width = 320)` | At 320 CSS px wide (a 1280 px window at 400 % zoom) there is no horizontal scrolling and no content pushed or cut off past the edges (WCAG 1.4.10). `aria-hidden` decoration and unrendered content are ignored, and the viewport is restored afterwards. |
+| `survivesTextSpacing()` | With the WCAG text-spacing override applied (line height 1.5, paragraph spacing 2em, letter spacing 0.12em, word spacing 0.16em), no text is cut off by `overflow: hidden` and nothing overflows the page (WCAG 1.4.12). The override is removed afterwards. |
+| `respectsReducedMotion()` | Reloads the page with `prefers-reduced-motion: reduce` and checks that no animation runs (WCAG 2.3.3). |
+| `hasNoEndlessAnimations(maxSeconds = 5)` | No CSS or Web Animations API animation runs longer than `maxSeconds` (WCAG 2.2.2 Pause, Stop, Hide). Run it with motion allowed, usually after using the page's own pause control. Content updated by JavaScript timers, such as a rotating message, is not detected. |
+
+Example:
+
+```ts
+test.use({ contextOptions: { reducedMotion: 'no-preference' } });
+
+test('animations can be paused', async ({ page }) => {
+  await page.goto('/');
+  await a11y(page).pageChecks((p) => p.reflowsAt(320).survivesTextSpacing().respectsReducedMotion());
+  await page.getByRole('button', { name: 'Pause animations' }).click();
+  await a11y(page).pageChecks((p) => p.hasNoEndlessAnimations());
+});
+```
 
 ## `axe(options?)`
 
