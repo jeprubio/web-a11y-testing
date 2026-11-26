@@ -63,7 +63,7 @@ await a11y(page).keyboardFocus((k) =>
    .press('Escape').shouldFocusVisibly('open-details'));
 ```
 
-Element checks go inside `elementChecks`, one `await` per element:
+Element checks go inside `elementChecks`, one `await` per element. If you forget an `await`, the check still runs when the block ends, so it can't pass silently:
 
 ```ts
 await a11y(page).elementChecks(async (e) => {

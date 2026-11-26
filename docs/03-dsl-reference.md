@@ -57,6 +57,8 @@ Focus order mismatch, forward (Tab):
 
 ## `elementChecks(block)`
 
+Each element chain runs when it is awaited. Any chain the block creates but doesn't await runs when the block ends, so a forgotten `await` can't make a check pass silently.
+
 ```ts
 await a11y(page).elementChecks(async (e) => {
   await e.element('email').hasRole('textbox').hasAccessibleNameContaining('Email').isRequired();

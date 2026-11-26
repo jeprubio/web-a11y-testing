@@ -152,7 +152,8 @@ export class PageChecks extends Chain {
 
   /**
    * With "reduce motion" turned on, nothing animates (WCAG 2.3.3). The page is reloaded
-   * with the setting on, as a user who already has it enabled would load it.
+   * with the setting on, as a user who already has it enabled would load it, and stays in
+   * that state afterwards: put this check last, or reload the page before further checks.
    */
   respectsReducedMotion(): this {
     this.queue.add('nothing animates when reduced motion is requested', async () => {
@@ -262,11 +263,7 @@ async function runningAnimations(page: Page, minMs: number): Promise<string[]> {
     return document
       .getAnimations()
       .filter((a) => a.playState === 'running')
-      .filter((a) => {
-        const end = a.effect?.getComputedTiming().endTime;
-        const total = typeof end === 'number' ? end : Number(end);
-        return !(total <= min);
-      })
+      .filter((a) => Number(a.effect?.getComputedTiming().endTime) > min)
       .map((a) => {
         const effect = a.effect as KeyframeEffect | null;
         const target = effect?.target as HTMLElement | null;

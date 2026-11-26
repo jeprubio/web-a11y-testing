@@ -11,32 +11,48 @@ type AriaRole = Parameters<Page['getByRole']>[0];
  * Playwright reads the real computed value, so these checks see what a screen reader sees.
  *
  *   await a11y(page).elementChecks(async (e) => {
- *     await e.element('page-title').isHeading(1).hasText('Equinox Night');
- *     await e.element('dialog-close').hasAccessibleName('Close event details');
+ *     await e.element('page-title').isHeading(1);
+ *     await e.element('dialog-close').hasAccessibleName('Close');
  *   });
  */
 export class AccessibilityAssertions {
+  private readonly created: ElementAccessibility[] = [];
+
   constructor(private readonly page: Page) {}
+
+  /**
+   * Runs every check created in this block that was not awaited, in creation order, so a
+   * forgotten `await` can never turn into a silently skipped check. Awaited chains are already
+   * empty and do nothing here.
+   */
+  async runPending(): Promise<void> {
+    for (const chain of this.created) await chain;
+  }
+
+  private track(chain: ElementAccessibility): ElementAccessibility {
+    this.created.push(chain);
+    return chain;
+  }
 
   /** Element by `data-testid`. Kotlin: `element(identifier)`, which used the test tag. */
   element(testId: string): ElementAccessibility {
-    return new ElementAccessibility(this.page, this.page.getByTestId(testId), `[data-testid="${testId}"]`);
+    return this.track(new ElementAccessibility(this.page, this.page.getByTestId(testId), `[data-testid="${testId}"]`));
   }
 
   /** Element by visible text. Kotlin: `elementWithText(text)`. */
   elementWithText(text: string | RegExp): ElementAccessibility {
-    return new ElementAccessibility(this.page, this.page.getByText(text).first(), `text=${String(text)}`);
+    return this.track(new ElementAccessibility(this.page, this.page.getByText(text).first(), `text=${String(text)}`));
   }
 
   /** Element by role and accessible name, the way assistive technology finds it. */
   elementWithRole(role: AriaRole, name?: string | RegExp): ElementAccessibility {
     const label = name ? `role=${role}[name=${String(name)}]` : `role=${role}`;
-    return new ElementAccessibility(this.page, this.page.getByRole(role, name ? { name } : {}), label);
+    return this.track(new ElementAccessibility(this.page, this.page.getByRole(role, name ? { name } : {}), label));
   }
 
   /** Element from any Playwright locator. */
   locator(locator: Locator, label = locator.toString()): ElementAccessibility {
-    return new ElementAccessibility(this.page, locator, label);
+    return this.track(new ElementAccessibility(this.page, locator, label));
   }
 }
 

@@ -53,6 +53,14 @@ test.describe('elementChecks', () => {
     await expect(run).rejects.toThrow(/\[data-testid="nameless"\]: accessible name is Close/);
   });
 
+  test('checks that were not awaited still run, so they cannot pass silently', async ({ page }) => {
+    const run = a11y(page).elementChecks((e) => {
+      e.element('title').isHeading(1); // forgot to await
+      e.element('nameless').hasAccessibleName('Close'); // forgot to await, and wrong
+    });
+    await expect(run).rejects.toThrow(/\[data-testid="nameless"\]: accessible name is Close/);
+  });
+
   test('ARIA snapshots', async ({ page }) => {
     await a11y(page).elementChecks(async (e) => {
       await e.element('close').matchesAriaSnapshot(`- button "Close dialog"`);

@@ -27,7 +27,9 @@ export class AccessibilityTestDsl {
 
   /** Accessible name, role, heading and state checks. Kotlin: `elementChecks { ... }`. */
   async elementChecks(block: (e: AccessibilityAssertions) => PromiseLike<void> | void): Promise<void> {
-    await block(new AccessibilityAssertions(this.page));
+    const assertions = new AccessibilityAssertions(this.page);
+    await block(assertions);
+    await assertions.runPending(); // runs any chain the block created but did not await
   }
 
   /** Whole-page structure: language, title, headings, landmarks, tabindex. */
