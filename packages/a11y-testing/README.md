@@ -6,6 +6,8 @@ It is the web port of the Android `a11ytesting` DSL for Jetpack Compose, so test
 
 ## Install
 
+The package is set up to be published to npm. Once it is:
+
 ```bash
 npm install --save-dev @jeprubio/playwright-a11y @playwright/test
 ```

@@ -1,6 +1,6 @@
 # Project structure: the monorepo explained for Android developers
 
-The repository has the same split as the Android `a11ytesting` project: a library that is published and a sample app that is not, whose tests use the library. On the web this is done with **npm workspaces**.
+The repository has the same split as the Android `a11ytesting` project: a library that can be published and a sample app that never is, whose tests use the library. On the web this is done with **npm workspaces**.
 
 ## Gradle to npm, term by term
 
@@ -9,7 +9,7 @@ The repository has the same split as the Android `a11ytesting` project: a librar
 | Root `settings.gradle(.kts)` with `include(":library", ":app")` | Root `package.json` with `"workspaces": ["packages/*", "apps/*"]` | [`package.json`](../package.json) |
 | Module `build.gradle` | Each workspace's own `package.json` | `packages/a11y-testing/package.json`, `apps/sample/package.json` |
 | `group:artifact:version` | Package `name` and `version` | `@jeprubio/playwright-a11y@0.1.0` |
-| Library module published as an AAR to Maven | Library package published as a tarball to the npm registry | `packages/a11y-testing` |
+| Library module published as an AAR to Maven | Library package that can be published as a tarball to the npm registry | `packages/a11y-testing` |
 | App module, never published | `"private": true` (npm refuses to publish it) | `apps/sample` |
 | `androidTestImplementation(project(":library"))` | `"devDependencies": { "@jeprubio/playwright-a11y": "*" }`, which npm links to the local folder | `apps/sample/package.json` |
 | `compileOnly` / dependency provided by the consumer | `peerDependencies` | `@playwright/test` is a peer of the library |

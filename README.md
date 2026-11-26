@@ -4,11 +4,11 @@ Equinox is a hackathon project that automates the accessibility checks testers u
 
 It is a small monorepo with the same shape as the Android `a11ytesting` project:
 
-| | Android (`a11ytesting`) | Web (this repo) | Published? |
-|---|---|---|---|
-| Library | `:library` module | [`packages/a11y-testing`](packages/a11y-testing): npm package `@jeprubio/playwright-a11y` | Yes |
-| Sample | `:app` module | [`apps/sample`](apps/sample): "DuckOps", an accessible (and silly) one-page product site | No |
-| Tests using the library | Instrumented tests in `app/src/androidTest` | Playwright tests in `apps/sample/tests` | No |
+| | Android (`a11ytesting`) | Web (this repo) |
+|---|---|---|
+| Library | `:library` module | [`packages/a11y-testing`](packages/a11y-testing): package `@jeprubio/playwright-a11y` |
+| Sample | `:app` module | [`apps/sample`](apps/sample): "DuckOps", an accessible (and silly) one-page product site |
+| Tests using the library | Instrumented tests in `app/src/androidTest` | Playwright tests in `apps/sample/tests` |
 
 The DSL reads the same on both platforms:
 
@@ -102,7 +102,7 @@ All of it is decorative: animated parts are hidden from assistive technology, an
 ```
 package.json                  workspace root: lists packages/* and apps/*, holds the shared scripts
 tsconfig.base.json            compiler options shared by every workspace
-packages/a11y-testing/        THE LIBRARY (published as @jeprubio/playwright-a11y)
+packages/a11y-testing/        THE LIBRARY (publishable as @jeprubio/playwright-a11y)
   src/
     index.ts                  a11y(page) and the public API: anything exported here is public
     keyboard.ts               KeyboardA11y and FocusStep (port of the Kotlin classes)

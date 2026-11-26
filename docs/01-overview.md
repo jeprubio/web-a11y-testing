@@ -8,7 +8,7 @@ On Android this was solved with the `a11ytesting` library: a small Kotlin DSL on
 
 ## Project shape
 
-Like the Android project, the repository has a published **library** (`packages/a11y-testing`, npm package `@jeprubio/playwright-a11y`) and an unpublished **sample app** (`apps/sample`) whose tests use the library. See [project structure](07-project-structure.md) for how npm workspaces map to Gradle modules.
+Like the Android project, the repository has a publishable **library** (`packages/a11y-testing`, npm package `@jeprubio/playwright-a11y`) and an unpublished **sample app** (`apps/sample`) whose tests use the library. See [project structure](07-project-structure.md) for how npm workspaces map to Gradle modules.
 
 ## Concept mapping
 
