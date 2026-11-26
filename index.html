@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Equinox Night: a free, accessible stargazing evening for everyone." />
+    <title>Equinox Night: stargazing for everyone</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%23ffd166'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main" data-testid="skip-link">Skip to main content</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <p class="brand" data-testid="brand">
+          <svg aria-hidden="true" focusable="false" width="28" height="28" viewBox="0 0 32 32">
+            <circle cx="16" cy="16" r="12" fill="currentColor" />
+          </svg>
+          <span>Equinox Night</span>
+        </p>
+        <nav aria-label="Main" data-testid="main-nav">
+          <ul class="nav-list">
+            <li><a href="#about" data-testid="nav-about">About</a></li>
+            <li><a href="#programme" data-testid="nav-programme">Programme</a></li>
+            <li><a href="#register" data-testid="nav-register">Register</a></li>
+            <li><a href="#faq" data-testid="nav-faq">FAQ</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1" data-testid="main">
+      <section class="hero" aria-labelledby="page-title" id="top">
+        <div class="container">
+          <p class="eyebrow">21 March 2027 · Retiro Park Observatory</p>
+          <h1 id="page-title" data-testid="page-title">Equinox Night: stargazing for everyone</h1>
+          <p class="lead" data-testid="hero-lead">
+            A free evening of telescopes, guided sky tours and hot chocolate. Designed from the start to work
+            with a keyboard, a screen reader or a wheelchair.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#register" data-testid="hero-register">Reserve a free ticket</a>
+            <button type="button" class="button button-secondary" data-testid="open-details" aria-haspopup="dialog">
+              Event details
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="section" aria-labelledby="about-title">
+        <div class="container">
+          <h2 id="about-title" data-testid="about-title">About the night</h2>
+          <div class="cards">
+            <article class="card">
+              <h3>Guided sky tours</h3>
+              <p>Astronomers describe the sky out loud, so you can follow along without seeing the telescope.</p>
+            </article>
+            <article class="card">
+              <h3>Tactile star maps</h3>
+              <p>Raised-print constellation maps and audio descriptions are available at the entrance.</p>
+            </article>
+            <article class="card">
+              <h3>Step-free site</h3>
+              <p>Every telescope platform has a ramp, and seating is available along the whole route.</p>
+            </article>
+          </div>
+          <figure class="figure">
+            <img
+              data-testid="sky-image"
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 160'%3E%3Crect width='600' height='160' fill='%230b1026'/%3E%3Ccircle cx='80' cy='40' r='3' fill='%23fff'/%3E%3Ccircle cx='160' cy='90' r='2' fill='%23fff'/%3E%3Ccircle cx='240' cy='50' r='3' fill='%23fff'/%3E%3Ccircle cx='330' cy='110' r='2' fill='%23fff'/%3E%3Ccircle cx='420' cy='60' r='3' fill='%23fff'/%3E%3Ccircle cx='520' cy='100' r='2' fill='%23fff'/%3E%3Cpath d='M80 40 L240 50 L420 60 L520 100' stroke='%23ffd166' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"
+              alt="Night sky with four bright stars joined by a line, forming a simple constellation"
+              width="600"
+              height="160"
+            />
+            <figcaption>The constellation trail you will follow during the guided tour.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="programme" class="section section-alt" aria-labelledby="programme-title">
+        <div class="container">
+          <h2 id="programme-title" data-testid="programme-title">Programme</h2>
+          <ol class="timeline" data-testid="programme-list">
+            <li><time datetime="2027-03-21T19:30">19:30</time> Doors open and welcome</li>
+            <li><time datetime="2027-03-21T20:00">20:00</time> Talk: why day and night are equal today</li>
+            <li><time datetime="2027-03-21T20:45">20:45</time> Guided telescope tours</li>
+            <li><time datetime="2027-03-21T22:30">22:30</time> Closing and hot chocolate</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="register" class="section" aria-labelledby="register-title">
+        <div class="container narrow">
+          <h2 id="register-title" data-testid="register-title">Reserve a free ticket</h2>
+          <p id="form-hint">Fields marked as required must be filled in.</p>
+
+          <div
+            class="error-summary"
+            data-testid="error-summary"
+            role="alert"
+            aria-labelledby="error-summary-title"
+            tabindex="-1"
+            hidden
+          >
+            <h3 id="error-summary-title">There is a problem</h3>
+            <ul data-testid="error-summary-list"></ul>
+          </div>
+
+          <form id="register-form" novalidate aria-describedby="form-hint" data-testid="register-form">
+            <div class="field" data-field="name">
+              <label for="name" data-testid="name-label">Full name <span class="required">(required)</span></label>
+              <input id="name" name="name" type="text" autocomplete="name" required aria-describedby="name-error" data-testid="name" />
+              <p id="name-error" class="field-error" data-testid="name-error" hidden></p>
+            </div>
+
+            <div class="field" data-field="email">
+              <label for="email" data-testid="email-label">Email address <span class="required">(required)</span></label>
+              <p id="email-hint" class="field-hint">We only use it to send your ticket.</p>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                aria-describedby="email-hint email-error"
+                data-testid="email"
+              />
+              <p id="email-error" class="field-error" data-testid="email-error" hidden></p>
+            </div>
+
+            <fieldset class="field" data-testid="ticket-group">
+              <legend>Ticket type</legend>
+              <div class="choice">
+                <input id="ticket-standard" type="radio" name="ticket" value="standard" checked data-testid="ticket-standard" />
+                <label for="ticket-standard">Standard</label>
+              </div>
+              <div class="choice">
+                <input id="ticket-companion" type="radio" name="ticket" value="companion" data-testid="ticket-companion" />
+                <label for="ticket-companion">Standard plus a free companion ticket</label>
+              </div>
+              <div class="choice">
+                <input id="ticket-tactile" type="radio" name="ticket" value="tactile" data-testid="ticket-tactile" />
+                <label for="ticket-tactile">Tactile tour (limited places)</label>
+              </div>
+            </fieldset>
+
+            <div class="field choice">
+              <input id="newsletter" name="newsletter" type="checkbox" data-testid="newsletter" />
+              <label for="newsletter">Send me news about future events</label>
+            </div>
+
+            <div class="field" data-field="terms">
+              <div class="choice">
+                <input id="terms" name="terms" type="checkbox" required aria-describedby="terms-error" data-testid="terms" />
+                <label for="terms">I accept the event rules <span class="required">(required)</span></label>
+              </div>
+              <p id="terms-error" class="field-error" data-testid="terms-error" hidden></p>
+            </div>
+
+            <button type="submit" class="button button-primary" data-testid="submit">Reserve ticket</button>
+          </form>
+
+          <p class="status" role="status" data-testid="form-status"></p>
+        </div>
+      </section>
+
+      <section id="faq" class="section section-alt" aria-labelledby="faq-title">
+        <div class="container narrow">
+          <h2 id="faq-title" data-testid="faq-title">Frequently asked questions</h2>
+          <details data-testid="faq-1-details">
+            <summary data-testid="faq-1">What if it is cloudy?</summary>
+            <p>The talk and the tactile tour still go ahead indoors. We email everyone by 17:00 on the day.</p>
+          </details>
+          <details data-testid="faq-2-details">
+            <summary data-testid="faq-2">Can I bring my assistance dog?</summary>
+            <p>Yes. Water bowls and a quiet resting area are available near the entrance.</p>
+          </details>
+          <details data-testid="faq-3-details">
+            <summary data-testid="faq-3">Is there sign language interpretation?</summary>
+            <p>Yes, the 20:00 talk is interpreted into Spanish Sign Language.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>Equinox Night is a demo page built for an accessibility testing hackathon.</p>
+        <a href="#top" data-testid="footer-top">Back to top</a>
+      </div>
+    </footer>
+
+    <dialog
+      class="dialog"
+      data-testid="details-dialog"
+      aria-labelledby="dialog-title"
+      aria-describedby="dialog-desc"
+    >
+      <div class="dialog-header">
+        <h2 id="dialog-title" data-testid="dialog-title">Event details</h2>
+        <button type="button" class="icon-button" data-testid="dialog-close" aria-label="Close event details">
+          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20">
+            <path d="M4 4 L16 16 M16 4 L4 16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+      <p id="dialog-desc">Saturday 21 March 2027, from 19:30 to 23:00, at the Retiro Park Observatory, Madrid.</p>
+      <ul class="dialog-list">
+        <li>Nearest step-free metro station: Atocha.</li>
+        <li>Bring warm clothes; it gets cold after sunset.</li>
+      </ul>
+      <div class="dialog-actions">
+        <a class="button button-secondary" href="#register" data-testid="dialog-register">Go to registration</a>
+        <button type="button" class="button button-primary" data-testid="dialog-ok">Got it</button>
+      </div>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

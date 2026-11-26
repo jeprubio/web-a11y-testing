@@ -1,0 +1,26 @@
+{
+  "name": "equinox",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An accessible one-page site plus a Playwright DSL that automates manual keyboard and ARIA accessibility checks.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "test:broken": "BROKEN=1 playwright test --project=chromium",
+    "focus-map": "playwright test focus-map --project=chromium",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vite": "^5.4.0"
+  }
+}

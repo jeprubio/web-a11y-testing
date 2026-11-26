@@ -1,0 +1,486 @@
+/*
+ * Equinox Night styles.
+ * Colour pairs were chosen to meet WCAG 2.2 AA contrast (4.5:1 for text, 3:1 for UI).
+ */
+:root {
+  --bg: #0b1026;
+  --bg-alt: #131a3a;
+  --surface: #1c2450;
+  --text: #f4f6ff;
+  --text-muted: #c9cff0;
+  --accent: #ffd166;
+  --accent-text: #1a1400;
+  --danger: #ff8a8a;
+  --focus: #ffd166;
+  --radius: 10px;
+  --max: 1080px;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--accent);
+}
+
+/* One clear focus indicator for every interactive element. */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+main:focus {
+  outline: none;
+}
+
+.container {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.narrow {
+  max-width: 680px;
+}
+
+/* Skip link: off-screen until it receives focus. */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.site-header {
+  background: var(--bg-alt);
+  border-bottom: 1px solid #2c356b;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--accent);
+}
+
+.brand span {
+  color: var(--text);
+}
+
+.nav-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-list a {
+  display: inline-block;
+  padding: 0.5rem 0.25rem;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav-list a:hover {
+  text-decoration: underline;
+}
+
+.hero {
+  padding: 4.5rem 0 3.5rem;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(255, 209, 102, 0.18), transparent 40%),
+    radial-gradient(circle at 10% 80%, rgba(120, 140, 255, 0.18), transparent 45%),
+    var(--bg);
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.15;
+  margin: 0 0 1rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+  margin: 0 0 1.25rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem;
+}
+
+.lead {
+  max-width: 60ch;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button-primary {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.button-primary:hover {
+  background: #ffe199;
+}
+
+.button-secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.button-secondary:hover {
+  background: var(--surface);
+}
+
+.section {
+  padding: 3.5rem 0;
+}
+
+.section-alt {
+  background: var(--bg-alt);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.card p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.figure {
+  margin: 2rem 0 0;
+}
+
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  border: 1px solid #2c356b;
+}
+
+.figure figcaption {
+  margin-top: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.timeline li {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 0.85rem 1.1rem;
+}
+
+.timeline time {
+  display: inline-block;
+  min-width: 4.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Form */
+.field {
+  margin: 0 0 1.5rem;
+}
+
+label,
+legend {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+fieldset {
+  border: 1px solid #3a447f;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem 0.5rem;
+}
+
+legend {
+  padding: 0 0.35rem;
+}
+
+.required {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.field-hint {
+  margin: 0 0 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+input[type='text'],
+input[type='email'] {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.6rem 0.8rem;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 2px solid #8a93c8;
+  border-radius: 8px;
+}
+
+input[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.choice label {
+  margin: 0;
+  font-weight: 400;
+}
+
+.choice input {
+  width: 1.3rem;
+  height: 1.3rem;
+  accent-color: var(--accent);
+}
+
+.field-error {
+  margin: 0.4rem 0 0;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.error-summary {
+  border: 3px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.error-summary ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.error-summary a {
+  color: var(--danger);
+}
+
+.status:not(:empty) {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  background: #12452f;
+  border: 2px solid #5fd39a;
+}
+
+/* FAQ */
+details {
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: 0.75rem;
+}
+
+summary {
+  cursor: pointer;
+  padding: 0.9rem 1.1rem;
+  font-weight: 600;
+}
+
+details p {
+  margin: 0;
+  padding: 0 1.1rem 1rem;
+  color: var(--text-muted);
+}
+
+.site-footer {
+  border-top: 1px solid #2c356b;
+  padding: 1.5rem 0;
+  color: var(--text-muted);
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-inner p {
+  margin: 0;
+}
+
+/* Dialog */
+.dialog {
+  width: min(520px, calc(100% - 2rem));
+  padding: 1.5rem;
+  border: 2px solid #3a447f;
+  border-radius: var(--radius);
+  background: var(--bg-alt);
+  color: var(--text);
+}
+
+.dialog::backdrop {
+  background: rgba(3, 6, 20, 0.75);
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.dialog-header h2 {
+  margin: 0 0 0.75rem;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: var(--surface);
+}
+
+.dialog-list {
+  padding-left: 1.25rem;
+  color: var(--text-muted);
+}
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+/* ---------------------------------------------------------------
+ * Broken mode (?broken=1): intentional accessibility bugs for demos.
+ * ------------------------------------------------------------- */
+.broken :focus-visible {
+  outline: none;
+}
+
+.broken .card p {
+  color: #4a527f;
+}
