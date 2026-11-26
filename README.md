@@ -86,6 +86,17 @@ DuckOps is a fake product, "rubber duck debugging, as a service", built to look 
 
 All of it is decorative: animated parts are hidden from assistive technology, and everything stops when the system asks for reduced motion. The tests run with reduced motion on, so animations never make them flaky.
 
+## Focus order map
+
+`npm run focus-map` tabs through the page the way a keyboard user would and draws every stop on a full-page screenshot: a numbered badge on each focused element and a dashed path in tab order. Click an image to open it at full size.
+
+| Correct page | Broken mode (`?broken=1`) |
+|---|---|
+| <a href="docs/images/focus-map.png"><img src="docs/images/focus-map.png" width="380" alt="Focus order map of the DuckOps page: 17 numbered stops run in reading order, from the skip link and navigation at the top, through the hero buttons and the booking form, to the FAQ and the Back to top link in the footer."></a> | <a href="docs/images/focus-map-broken.png"><img src="docs/images/focus-map-broken.png" width="380" alt="Focus order map of the broken page: stop 1 is the Book my duck button halfway down the page, so the path jumps from the form up to the header and back down again."></a> |
+| Stops follow the reading order, top to bottom. | `tabindex="1"` on the submit button makes it stop **1**, so focus jumps to the middle of the page before the header. |
+
+The test behind it (`apps/sample/tests/focus-map.spec.ts`) also compares the stops with the expected order, so the map is both a review aid and an assertion. These two images are kept in [`docs/images`](docs/images); a test run writes fresh ones for every browser to `apps/sample/focus-maps/`.
+
 ## What the sample app tests
 
 | Area | Checks | Spec |

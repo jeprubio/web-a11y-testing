@@ -29,7 +29,7 @@ Generate a focus map of the broken page next to the correct one:
 BROKEN=1 npm run focus-map
 ```
 
-Compare `apps/sample/focus-maps/chromium.png` and `apps/sample/focus-maps/chromium-broken.png`. In the broken map, stop number 1 is the submit button halfway down the page.
+Compare `apps/sample/focus-maps/chromium.png` and `apps/sample/focus-maps/chromium-broken.png`. In the broken map, stop number 1 is the submit button halfway down the page. Pre-generated copies of both are in [`docs/images`](images): [correct](images/focus-map.png) and [broken](images/focus-map-broken.png).
 
 ## Five-minute demo script
 
